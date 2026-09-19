@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-3">
+    <link rel="stylesheet" href="css/style.css?v=20260919-4">
 </head>
 <body>
     <main class="app-shell">
@@ -52,7 +52,7 @@
 
                 <form id="formSubstantivo" class="form-substantivo" hidden>
                     <div class="form-substantivo-topo">
-                        <h3>Novo substantivo</h3>
+                        <h3 id="tituloFormSubstantivo">Novo substantivo</h3>
                         <button type="button" id="cancelarNovoSubstantivo" class="secundario">Cancelar</button>
                     </div>
 
@@ -124,6 +124,7 @@
                                 <th>Substantivo</th>
                                 <th>Tradução</th>
                                 <th>Plural</th>
+                                <th class="coluna-acoes">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="listaSubstantivos"></tbody>
@@ -139,6 +140,6 @@
         </section>
     </main>
 
-    <script type="module" src="js/auth.js?v=20260919-3"></script>
+    <script type="module" src="js/auth.js?v=20260919-4"></script>
 </body>
 </html>
