@@ -1,5 +1,10 @@
-import { database } from "./firebase.js?v=20260919-2";
-import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { database } from "./firebase.js?v=20260919-3";
+import {
+    ref,
+    onValue,
+    get,
+    set
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const REGISTROS_POR_PAGINA = 20;
 
@@ -7,6 +12,8 @@ let cancelarEscuta = null;
 let registros = [];
 let paginaAtual = 1;
 let controlesConfigurados = false;
+let cadastroConfigurado = false;
+let substantivoRecemCriado = null;
 
 function criarLinha(substantivo, item) {
     const linha = document.createElement("tr");
@@ -81,6 +88,97 @@ function configurarControlesPaginacao() {
     controlesConfigurados = true;
 }
 
+function definirMensagemCadastro(texto, sucesso = false) {
+    const mensagem = document.getElementById("mensagemSubstantivo");
+    mensagem.textContent = texto;
+    mensagem.classList.toggle("sucesso", sucesso);
+}
+
+function capitalizarPrimeiraLetra(texto) {
+    if (!texto) return "";
+    return texto.charAt(0).toLocaleUpperCase("de-DE") + texto.slice(1);
+}
+
+function configurarCadastro() {
+    if (cadastroConfigurado) return;
+
+    const botaoNovo = document.getElementById("novoSubstantivo");
+    const botaoCancelar = document.getElementById("cancelarNovoSubstantivo");
+    const form = document.getElementById("formSubstantivo");
+    const botaoSalvar = document.getElementById("salvarSubstantivo");
+
+    botaoNovo.addEventListener("click", () => {
+        form.hidden = false;
+        definirMensagemCadastro("");
+        document.getElementById("artigoSubstantivo").focus();
+    });
+
+    botaoCancelar.addEventListener("click", () => {
+        form.reset();
+        form.hidden = true;
+        definirMensagemCadastro("");
+    });
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        definirMensagemCadastro("");
+
+        const artigo = document.getElementById("artigoSubstantivo").value;
+        const substantivo = capitalizarPrimeiraLetra(
+            document.getElementById("nomeSubstantivo").value.trim()
+        );
+        const traducao = document.getElementById("traducaoSubstantivo").value.trim();
+        const plural = document.getElementById("pluralSubstantivo").value.trim();
+        const generoOposto = document.getElementById("generoOpostoSubstantivo").value.trim();
+        const pluralGeneroOposto = document.getElementById("pluralGeneroOpostoSubstantivo").value.trim();
+        const observacao = document.getElementById("observacaoSubstantivo").value.trim();
+
+        if (/[.#$\/\[\]]/.test(substantivo)) {
+            definirMensagemCadastro("O substantivo contém um caractere que não pode ser usado no banco.");
+            return;
+        }
+
+        const caminho = ref(database, `substantivos/${substantivo}`);
+
+        botaoSalvar.disabled = true;
+        botaoSalvar.textContent = "Salvando...";
+
+        try {
+            const existente = await get(caminho);
+
+            if (existente.exists()) {
+                definirMensagemCadastro("Esse substantivo já está cadastrado.");
+                return;
+            }
+
+            const dados = {
+                artigo,
+                traducao,
+                plural
+            };
+
+            if (generoOposto) dados.generoOposto = generoOposto;
+            if (pluralGeneroOposto) dados.pluralGeneroOposto = pluralGeneroOposto;
+            if (observacao) dados.observacao = observacao;
+
+            substantivoRecemCriado = substantivo;
+            await set(caminho, dados);
+
+            form.reset();
+            definirMensagemCadastro(`${substantivo} cadastrado com sucesso.`, true);
+        } catch (error) {
+            console.error("Erro ao cadastrar substantivo:", error);
+            substantivoRecemCriado = null;
+            definirMensagemCadastro("Não foi possível cadastrar o substantivo.");
+        } finally {
+            botaoSalvar.disabled = false;
+            botaoSalvar.textContent = "Salvar";
+        }
+    });
+
+    cadastroConfigurado = true;
+}
+
 export function iniciarListaSubstantivos() {
     const corpo = document.getElementById("listaSubstantivos");
     const carregando = document.getElementById("carregandoSubstantivos");
@@ -90,6 +188,7 @@ export function iniciarListaSubstantivos() {
     const paginacao = document.getElementById("paginacaoSubstantivos");
 
     configurarControlesPaginacao();
+    configurarCadastro();
 
     if (cancelarEscuta) {
         cancelarEscuta();
@@ -124,6 +223,18 @@ export function iniciarListaSubstantivos() {
             registros = Object.entries(dados)
                 .sort(([a], [b]) => a.localeCompare(b, "de"));
 
+            if (substantivoRecemCriado) {
+                const indice = registros.findIndex(
+                    ([substantivo]) => substantivo === substantivoRecemCriado
+                );
+
+                if (indice >= 0) {
+                    paginaAtual = Math.floor(indice / REGISTROS_POR_PAGINA) + 1;
+                }
+
+                substantivoRecemCriado = null;
+            }
+
             total.textContent = `${registros.length} substantivo${registros.length === 1 ? "" : "s"}`;
             vazio.hidden = true;
             erro.hidden = true;
@@ -151,4 +262,12 @@ export function pararListaSubstantivos() {
 
     registros = [];
     paginaAtual = 1;
+    substantivoRecemCriado = null;
+
+    const form = document.getElementById("formSubstantivo");
+    if (form) {
+        form.reset();
+        form.hidden = true;
+        definirMensagemCadastro("");
+    }
 }
