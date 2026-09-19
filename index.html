@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-7">
+    <link rel="stylesheet" href="css/style.css?v=20260919-8">
 </head>
 <body>
     <main class="app-shell">
@@ -37,8 +37,8 @@
                 <button type="button" id="sair" class="secundario">Sair</button>
             </header>
 
-            <section class="painel-card" aria-labelledby="titulo-substantivos">
-                <div class="painel-card-header">
+            <details class="painel-card painel-card-retratil">
+                <summary class="painel-card-header">
                     <div>
                         <h2 id="titulo-substantivos">Substantivos</h2>
                         <p>Registros atuais do Realtime Database.</p>
@@ -46,8 +46,12 @@
 
                     <div class="acoes-cabecalho">
                         <span id="totalSubstantivos" class="contador"></span>
-                        <button type="button" id="novoSubstantivo">+ Novo substantivo</button>
+                        <span class="indicador-retratil" aria-hidden="true"></span>
                     </div>
+                </summary>
+
+                <div class="acoes-secao">
+                    <button type="button" id="novoSubstantivo">+ Novo substantivo</button>
                 </div>
 
                 <form id="formSubstantivo" class="form-substantivo" hidden>
@@ -147,10 +151,10 @@
                     <span id="indicadorPagina"></span>
                     <button type="button" id="proximaPagina" class="secundario">Próxima →</button>
                 </div>
-            </section>
+            </details>
 
-            <section class="painel-card" aria-labelledby="titulo-verbos">
-                <div class="painel-card-header">
+            <details class="painel-card painel-card-retratil">
+                <summary class="painel-card-header">
                     <div>
                         <h2 id="titulo-verbos">Verbos</h2>
                         <p>Registros atuais do Realtime Database.</p>
@@ -158,8 +162,12 @@
 
                     <div class="acoes-cabecalho">
                         <span id="totalVerbos" class="contador"></span>
-                        <button type="button" id="novoVerbo">+ Novo verbo</button>
+                        <span class="indicador-retratil" aria-hidden="true"></span>
                     </div>
+                </summary>
+
+                <div class="acoes-secao">
+                    <button type="button" id="novoVerbo">+ Novo verbo</button>
                 </div>
 
                 <form id="formVerbo" class="form-verbo" hidden>
@@ -291,7 +299,7 @@
                     <span id="indicadorPaginaVerbos"></span>
                     <button type="button" id="proximaPaginaVerbos" class="secundario">Próxima →</button>
                 </div>
-            </section>
+            </details>
         </section>
     </main>
 

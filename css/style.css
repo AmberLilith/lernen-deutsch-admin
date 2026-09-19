@@ -587,3 +587,120 @@ button.secundario {
         grid-template-columns: 1fr;
     }
 }
+
+
+.painel-card-retratil {
+    padding: 0;
+    overflow: hidden;
+}
+
+.painel-card-retratil > summary {
+    list-style: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 24px;
+    user-select: none;
+}
+
+.painel-card-retratil > summary::-webkit-details-marker {
+    display: none;
+}
+
+.painel-card-retratil > summary::marker {
+    content: "";
+}
+
+.painel-card-retratil > summary:hover {
+    background: #f8fafb;
+}
+
+.painel-card-retratil[open] > summary {
+    border-bottom: 1px solid #e4e7eb;
+}
+
+.painel-card-retratil[open] > summary:hover {
+    background: #fff;
+}
+
+.painel-card-retratil > summary:focus-visible {
+    outline: 2px solid #52606d;
+    outline-offset: -2px;
+}
+
+.painel-card-retratil .painel-card-header {
+    margin-bottom: 0;
+}
+
+.indicador-retratil::before {
+    content: "▸";
+    display: inline-block;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.painel-card-retratil[open] .indicador-retratil::before {
+    content: "▾";
+}
+
+.acoes-secao {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 24px 0;
+}
+
+.acoes-secao button {
+    margin-top: 0;
+}
+
+.painel-card-retratil > form,
+.painel-card-retratil > .busca-substantivos,
+.painel-card-retratil > .busca-verbos,
+.painel-card-retratil > .estado-lista,
+.painel-card-retratil > .tabela-wrapper,
+.painel-card-retratil > .paginacao {
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
+.painel-card-retratil > .paginacao {
+    margin-bottom: 24px;
+}
+
+.painel-card-retratil > .tabela-wrapper {
+    margin-bottom: 24px;
+}
+
+@media (max-width: 640px) {
+    .painel-card-retratil {
+        padding: 0;
+    }
+
+    .painel-card-retratil > summary {
+        padding: 18px;
+    }
+
+    .painel-card-retratil > summary.painel-card-header {
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .painel-card-retratil > summary .acoes-cabecalho {
+        margin-left: auto;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+    }
+
+    .acoes-secao {
+        padding: 16px 18px 0;
+    }
+
+    .painel-card-retratil > form,
+    .painel-card-retratil > .busca-substantivos,
+    .painel-card-retratil > .busca-verbos,
+    .painel-card-retratil > .estado-lista,
+    .painel-card-retratil > .tabela-wrapper,
+    .painel-card-retratil > .paginacao {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+}
