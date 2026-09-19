@@ -1,4 +1,4 @@
-import { database } from "./firebase.js?v=20260919-5";
+import { database } from "./firebase.js?v=20260919-6";
 import {
     ref,
     onValue,
@@ -12,12 +12,46 @@ const REGISTROS_POR_PAGINA = 20;
 
 let cancelarEscuta = null;
 let registros = [];
+let registrosFiltrados = [];
 let paginaAtual = 1;
 let controlesConfigurados = false;
 let cadastroConfigurado = false;
+let buscaConfigurada = false;
 let substantivoEmFoco = null;
 let modoFormulario = "novo";
 let substantivoOriginal = null;
+
+function normalizar(texto) {
+    return (texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+function atualizarFiltro(reiniciarPagina = false) {
+    const campoBusca = document.getElementById("buscaSubstantivos");
+    const resultadoBusca = document.getElementById("resultadoBuscaSubstantivos");
+    const termo = campoBusca.value.trim();
+    const termoNormalizado = normalizar(termo);
+
+    if (termo === "") {
+        registrosFiltrados = [...registros];
+        resultadoBusca.textContent = "";
+    } else {
+        registrosFiltrados = registros.filter(([substantivo, item]) => {
+            const substantivoOk = normalizar(substantivo).includes(termoNormalizado);
+            const traducaoOk = normalizar(item.traducao).includes(termoNormalizado);
+            return substantivoOk || traducaoOk;
+        });
+
+        resultadoBusca.textContent =
+            `${registrosFiltrados.length} resultado${registrosFiltrados.length === 1 ? "" : "s"}`;
+    }
+
+    if (reiniciarPagina) {
+        paginaAtual = 1;
+    }
+}
 
 async function excluirSubstantivo(substantivo, botao) {
     const confirmado = window.confirm(
@@ -88,15 +122,26 @@ function renderizarPagina() {
     const anterior = document.getElementById("paginaAnterior");
     const proxima = document.getElementById("proximaPagina");
     const indicador = document.getElementById("indicadorPagina");
+    const vazio = document.getElementById("listaVazia");
+    const campoBusca = document.getElementById("buscaSubstantivos");
 
-    const totalPaginas = Math.ceil(registros.length / REGISTROS_POR_PAGINA);
+    const totalPaginas = Math.ceil(registrosFiltrados.length / REGISTROS_POR_PAGINA);
 
     if (totalPaginas === 0) {
         corpo.innerHTML = "";
         paginacao.hidden = true;
+
+        if (registros.length === 0) {
+            vazio.textContent = "Nenhum substantivo cadastrado.";
+        } else if (campoBusca.value.trim() !== "") {
+            vazio.textContent = "Nenhum substantivo encontrado.";
+        }
+
+        vazio.hidden = false;
         return;
     }
 
+    vazio.hidden = true;
     paginaAtual = Math.min(paginaAtual, totalPaginas);
 
     const inicio = (paginaAtual - 1) * REGISTROS_POR_PAGINA;
@@ -104,7 +149,7 @@ function renderizarPagina() {
 
     corpo.innerHTML = "";
 
-    registros.slice(inicio, fim).forEach(([substantivo, item]) => {
+    registrosFiltrados.slice(inicio, fim).forEach(([substantivo, item]) => {
         corpo.appendChild(criarLinha(substantivo, item));
     });
 
@@ -125,7 +170,7 @@ function configurarControlesPaginacao() {
     });
 
     document.getElementById("proximaPagina").addEventListener("click", () => {
-        const totalPaginas = Math.ceil(registros.length / REGISTROS_POR_PAGINA);
+        const totalPaginas = Math.ceil(registrosFiltrados.length / REGISTROS_POR_PAGINA);
 
         if (paginaAtual < totalPaginas) {
             paginaAtual++;
@@ -134,6 +179,19 @@ function configurarControlesPaginacao() {
     });
 
     controlesConfigurados = true;
+}
+
+function configurarBusca() {
+    if (buscaConfigurada) return;
+
+    const campoBusca = document.getElementById("buscaSubstantivos");
+
+    campoBusca.addEventListener("input", () => {
+        atualizarFiltro(true);
+        renderizarPagina();
+    });
+
+    buscaConfigurada = true;
 }
 
 function definirMensagemCadastro(texto, sucesso = false) {
@@ -272,7 +330,7 @@ function configurarCadastro() {
         }
 
         botaoSalvar.disabled = true;
-        botaoSalvar.textContent = modoFormulario === "editar" ? "Salvando..." : "Salvando...";
+        botaoSalvar.textContent = "Salvando...";
 
         try {
             const estavaEditando = modoFormulario === "editar";
@@ -326,6 +384,7 @@ export function iniciarListaSubstantivos() {
 
     configurarControlesPaginacao();
     configurarCadastro();
+    configurarBusca();
 
     if (cancelarEscuta) {
         cancelarEscuta();
@@ -333,6 +392,7 @@ export function iniciarListaSubstantivos() {
     }
 
     registros = [];
+    registrosFiltrados = [];
     paginaAtual = 1;
     corpo.innerHTML = "";
     carregando.hidden = false;
@@ -348,9 +408,9 @@ export function iniciarListaSubstantivos() {
 
             if (!snapshot.exists()) {
                 registros = [];
-                corpo.innerHTML = "";
-                vazio.hidden = false;
-                paginacao.hidden = true;
+                registrosFiltrados = [];
+                atualizarFiltro(false);
+                renderizarPagina();
                 total.textContent = "0 substantivos";
                 return;
             }
@@ -360,8 +420,10 @@ export function iniciarListaSubstantivos() {
             registros = Object.entries(dados)
                 .sort(([a], [b]) => a.localeCompare(b, "de"));
 
+            atualizarFiltro(false);
+
             if (substantivoEmFoco) {
-                const indice = registros.findIndex(
+                const indice = registrosFiltrados.findIndex(
                     ([substantivo]) => substantivo === substantivoEmFoco
                 );
 
@@ -381,6 +443,7 @@ export function iniciarListaSubstantivos() {
         error => {
             console.error("Erro ao carregar substantivos:", error);
             registros = [];
+            registrosFiltrados = [];
             corpo.innerHTML = "";
             carregando.hidden = true;
             vazio.hidden = true;
@@ -398,10 +461,17 @@ export function pararListaSubstantivos() {
     }
 
     registros = [];
+    registrosFiltrados = [];
     paginaAtual = 1;
     substantivoEmFoco = null;
     modoFormulario = "novo";
     substantivoOriginal = null;
+
+    const campoBusca = document.getElementById("buscaSubstantivos");
+    const resultadoBusca = document.getElementById("resultadoBuscaSubstantivos");
+
+    if (campoBusca) campoBusca.value = "";
+    if (resultadoBusca) resultadoBusca.textContent = "";
 
     const form = document.getElementById("formSubstantivo");
     if (form) {
