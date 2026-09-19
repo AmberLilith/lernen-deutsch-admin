@@ -1,4 +1,4 @@
-import { database } from "./firebase.js";
+import { database } from "./firebase.js?v=20260919-1";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 let cancelarEscuta = null;
