@@ -15,7 +15,9 @@ body {
 }
 
 button,
-input {
+input,
+select,
+textarea {
     font: inherit;
 }
 
@@ -53,9 +55,17 @@ h1 {
     font-size: 1.8rem;
 }
 
-h2 {
+h2,
+h3 {
     margin: 0;
+}
+
+h2 {
     font-size: 1.35rem;
+}
+
+h3 {
+    font-size: 1.05rem;
 }
 
 .intro {
@@ -74,7 +84,10 @@ h2 {
     font-weight: 600;
 }
 
-.login-form input {
+.login-form input,
+.form-substantivo input,
+.form-substantivo select,
+.form-substantivo textarea {
     width: 100%;
     padding: 12px 13px;
     border: 1px solid #b8c2cc;
@@ -83,9 +96,16 @@ h2 {
     color: inherit;
 }
 
-.login-form input:focus {
+.login-form input:focus,
+.form-substantivo input:focus,
+.form-substantivo select:focus,
+.form-substantivo textarea:focus {
     outline: 2px solid #52606d;
     outline-offset: 2px;
+}
+
+.form-substantivo textarea {
+    resize: vertical;
 }
 
 button {
@@ -156,10 +176,78 @@ button.secundario {
     color: #52606d;
 }
 
+.acoes-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.acoes-cabecalho button {
+    margin-top: 0;
+}
+
 .contador {
     white-space: nowrap;
     color: #52606d;
     font-size: 0.92rem;
+}
+
+.form-substantivo {
+    margin: 0 0 24px;
+    padding: 20px;
+    border: 1px solid #d9e0e7;
+    border-radius: 10px;
+    background: #f8fafb;
+}
+
+.form-substantivo-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.campo {
+    display: grid;
+    gap: 7px;
+}
+
+.campo label {
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.campo-largo {
+    grid-column: 1 / -1;
+}
+
+.form-acoes {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.form-acoes button {
+    margin-top: 0;
+}
+
+.mensagem-form {
+    font-size: 0.92rem;
+    color: #9b1c1c;
+}
+
+.mensagem-form.sucesso {
+    color: #1f6f43;
 }
 
 .estado-lista {
@@ -223,17 +311,36 @@ button.secundario {
     }
 
     .painel-header,
-    .painel-card-header {
+    .painel-card-header,
+    .form-substantivo-topo {
         align-items: stretch;
         flex-direction: column;
     }
 
-    .painel-header .secundario {
+    .painel-header .secundario,
+    .form-substantivo-topo .secundario {
         align-self: flex-start;
     }
 
     .painel-card {
         padding: 18px;
+    }
+
+    .acoes-cabecalho {
+        justify-content: flex-start;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .campo-largo {
+        grid-column: auto;
+    }
+
+    .form-acoes {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .paginacao {
