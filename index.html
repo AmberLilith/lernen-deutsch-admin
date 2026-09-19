@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-8">
+    <link rel="stylesheet" href="css/style.css?v=20260919-9">
 </head>
 <body>
     <main class="app-shell">
@@ -300,9 +300,105 @@
                     <button type="button" id="proximaPaginaVerbos" class="secundario">Próxima →</button>
                 </div>
             </details>
+
+            <details class="painel-card painel-card-retratil">
+                <summary class="painel-card-header">
+                    <div>
+                        <h2 id="titulo-adjetivos">Adjetivos</h2>
+                        <p>Registros atuais do Realtime Database.</p>
+                    </div>
+
+                    <div class="acoes-cabecalho">
+                        <span id="totalAdjetivos" class="contador"></span>
+                        <span class="indicador-retratil" aria-hidden="true"></span>
+                    </div>
+                </summary>
+
+                <div class="acoes-secao">
+                    <button type="button" id="novoAdjetivo">+ Novo adjetivo</button>
+                </div>
+
+                <form id="formAdjetivo" class="form-adjetivo" hidden>
+                    <div class="form-adjetivo-topo">
+                        <h3 id="tituloFormAdjetivo">Novo adjetivo</h3>
+                        <button type="button" id="cancelarNovoAdjetivo" class="secundario">Cancelar</button>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="campo">
+                            <label for="nomeAdjetivo">Adjetivo</label>
+                            <input type="text" id="nomeAdjetivo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="traducaoAdjetivo">Tradução</label>
+                            <input type="text" id="traducaoAdjetivo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="comparativoAdjetivo">Comparativo</label>
+                            <input type="text" id="comparativoAdjetivo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="superlativoAdjetivo">Superlativo</label>
+                            <input type="text" id="superlativoAdjetivo" autocomplete="off" required>
+                        </div>
+                    </div>
+
+                    <div class="form-acoes">
+                        <button type="submit" id="salvarAdjetivo">Salvar</button>
+                        <span id="mensagemAdjetivo" class="mensagem-form" role="status" aria-live="polite"></span>
+                    </div>
+                </form>
+
+                <div class="busca-adjetivos">
+                    <input
+                        type="search"
+                        id="buscaAdjetivos"
+                        placeholder="Buscar por adjetivo, tradução, comparativo ou superlativo..."
+                        autocomplete="off"
+                        aria-label="Buscar adjetivos"
+                    >
+                    <span id="resultadoBuscaAdjetivos" class="resultado-busca"></span>
+                </div>
+
+                <div id="carregandoAdjetivos" class="estado-lista" role="status">
+                    Carregando adjetivos...
+                </div>
+
+                <div id="erroAdjetivos" class="estado-lista erro" hidden>
+                    Não foi possível carregar os adjetivos.
+                </div>
+
+                <div id="listaAdjetivosVazia" class="estado-lista" hidden>
+                    Nenhum adjetivo cadastrado.
+                </div>
+
+                <div class="tabela-wrapper">
+                    <table class="tabela-adjetivos">
+                        <thead>
+                            <tr>
+                                <th>Adjetivo</th>
+                                <th>Tradução</th>
+                                <th>Comparativo</th>
+                                <th>Superlativo</th>
+                                <th class="coluna-acoes">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaAdjetivos"></tbody>
+                    </table>
+                </div>
+
+                <div id="paginacaoAdjetivos" class="paginacao" hidden>
+                    <button type="button" id="paginaAnteriorAdjetivos" class="secundario">← Anterior</button>
+                    <span id="indicadorPaginaAdjetivos"></span>
+                    <button type="button" id="proximaPaginaAdjetivos" class="secundario">Próxima →</button>
+                </div>
+            </details>
         </section>
     </main>
 
-    <script type="module" src="js/auth.js?v=20260919-7"></script>
+    <script type="module" src="js/auth.js?v=20260919-9"></script>
 </body>
 </html>
