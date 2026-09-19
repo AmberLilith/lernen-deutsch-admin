@@ -1,4 +1,4 @@
-import { auth } from "./firebase.js?v=20260919-2";
+import { auth } from "./firebase.js?v=20260919-3";
 import {
     signInWithEmailAndPassword,
     signOut,
@@ -7,7 +7,7 @@ import {
 import {
     iniciarListaSubstantivos,
     pararListaSubstantivos
-} from "./substantivos.js?v=20260919-2";
+} from "./substantivos.js?v=20260919-3";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 
