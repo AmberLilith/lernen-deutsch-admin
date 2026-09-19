@@ -7,40 +7,83 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <main class="login-page">
-        <section class="login-card" aria-labelledby="titulo-login">
-            <div class="eyebrow">Lernen Deutsch</div>
-            <h1 id="titulo-login">Painel administrativo</h1>
-            <p class="intro">Entre com a conta autorizada para gerenciar o conteúdo do site.</p>
+    <main class="app-shell">
+        <section id="loginArea" class="login-page" aria-labelledby="titulo-login">
+            <div class="login-card">
+                <div class="eyebrow">Lernen Deutsch</div>
+                <h1 id="titulo-login">Painel administrativo</h1>
+                <p class="intro">Entre com a conta autorizada para gerenciar o conteúdo do site.</p>
 
-            <form id="loginForm" class="login-form">
-                <label for="email">E-mail</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    autocomplete="username"
-                    required
-                >
+                <form id="loginForm" class="login-form">
+                    <label for="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        autocomplete="username"
+                        required
+                    >
 
-                <label for="senha">Senha</label>
-                <input
-                    type="password"
-                    id="senha"
-                    name="senha"
-                    autocomplete="current-password"
-                    required
-                >
+                    <label for="senha">Senha</label>
+                    <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        autocomplete="current-password"
+                        required
+                    >
 
-                <button type="submit" id="entrar">Entrar</button>
-            </form>
+                    <button type="submit" id="entrar">Entrar</button>
+                </form>
 
-            <p id="mensagem" class="mensagem" role="status" aria-live="polite"></p>
-
-            <div id="sessaoAtiva" class="sessao-ativa" hidden>
-                <p>Login realizado com sucesso.</p>
-                <button type="button" id="sair" class="secundario">Sair</button>
+                <p id="mensagem" class="mensagem" role="status" aria-live="polite"></p>
             </div>
+        </section>
+
+        <section id="painelArea" class="painel-page" hidden>
+            <header class="painel-header">
+                <div>
+                    <div class="eyebrow">Lernen Deutsch</div>
+                    <h1>Painel administrativo</h1>
+                </div>
+                <button type="button" id="sair" class="secundario">Sair</button>
+            </header>
+
+            <section class="painel-card" aria-labelledby="titulo-substantivos">
+                <div class="painel-card-header">
+                    <div>
+                        <h2 id="titulo-substantivos">Substantivos</h2>
+                        <p>Registros atuais do Realtime Database.</p>
+                    </div>
+                    <span id="totalSubstantivos" class="contador"></span>
+                </div>
+
+                <div id="carregandoSubstantivos" class="estado-lista" role="status">
+                    Carregando substantivos...
+                </div>
+
+                <div id="erroSubstantivos" class="estado-lista erro" hidden>
+                    Não foi possível carregar os substantivos.
+                </div>
+
+                <div id="listaVazia" class="estado-lista" hidden>
+                    Nenhum substantivo cadastrado.
+                </div>
+
+                <div class="tabela-wrapper">
+                    <table class="tabela-substantivos">
+                        <thead>
+                            <tr>
+                                <th>Artigo</th>
+                                <th>Substantivo</th>
+                                <th>Tradução</th>
+                                <th>Plural</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaSubstantivos"></tbody>
+                    </table>
+                </div>
+            </section>
         </section>
     </main>
 
