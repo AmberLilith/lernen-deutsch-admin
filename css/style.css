@@ -376,3 +376,23 @@ button.secundario {
 .botao-editar:hover {
     background: #f4f6f8;
 }
+
+
+.acoes-linha {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.botao-excluir {
+    margin: 0;
+    padding: 8px 12px;
+    background: #fff;
+    color: #9b1c1c;
+    border: 1px solid #d7a3a3;
+    font-weight: 600;
+}
+
+.botao-excluir:hover {
+    background: #fff4f4;
+}
