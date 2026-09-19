@@ -355,3 +355,24 @@ button.secundario {
 [hidden] {
     display: none !important;
 }
+
+
+.coluna-acoes,
+.celula-acoes {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right !important;
+}
+
+.botao-editar {
+    margin: 0;
+    padding: 8px 12px;
+    background: #fff;
+    color: #263238;
+    border: 1px solid #b8c2cc;
+    font-weight: 600;
+}
+
+.botao-editar:hover {
+    background: #f4f6f8;
+}
