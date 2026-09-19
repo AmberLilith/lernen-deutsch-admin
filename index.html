@@ -4,11 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-9">
+    <link rel="stylesheet" href="css/style.css?v=20260919-11">
 </head>
 <body>
     <main class="app-shell">
-        <section id="loginArea" class="login-page" aria-labelledby="titulo-login">
+        <section id="sessaoCarregando" class="sessao-carregando" role="status" aria-live="polite">
+            <span>Verificando sessão...</span>
+        </section>
+
+        <section id="loginArea" class="login-page" aria-labelledby="titulo-login" hidden>
             <div class="login-card">
                 <div class="eyebrow">Lernen Deutsch</div>
                 <h1 id="titulo-login">Painel administrativo</h1>
@@ -399,6 +403,6 @@
         </section>
     </main>
 
-    <script type="module" src="js/auth.js?v=20260919-10"></script>
+    <script type="module" src="js/auth.js?v=20260919-11"></script>
 </body>
 </html>

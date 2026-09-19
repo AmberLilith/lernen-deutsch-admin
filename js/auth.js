@@ -19,6 +19,7 @@ import {
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 
+const sessaoCarregando = document.getElementById("sessaoCarregando");
 const loginArea = document.getElementById("loginArea");
 const painelArea = document.getElementById("painelArea");
 const form = document.getElementById("loginForm");
@@ -34,6 +35,7 @@ function definirMensagem(texto, sucesso = false) {
 }
 
 function mostrarSessaoAutenticada(autenticada) {
+    sessaoCarregando.hidden = true;
     loginArea.hidden = autenticada;
     painelArea.hidden = !autenticada;
 }

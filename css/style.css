@@ -806,3 +806,13 @@ button.secundario {
         margin-right: 18px;
     }
 }
+
+
+.sessao-carregando {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    color: #52606d;
+    font-size: 0.95rem;
+}
