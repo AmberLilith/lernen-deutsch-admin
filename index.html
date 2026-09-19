@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-2">
+    <link rel="stylesheet" href="css/style.css?v=20260919-3">
 </head>
 <body>
     <main class="app-shell">
@@ -16,22 +16,10 @@
 
                 <form id="loginForm" class="login-form">
                     <label for="email">E-mail</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        autocomplete="username"
-                        required
-                    >
+                    <input type="email" id="email" name="email" autocomplete="username" required>
 
                     <label for="senha">Senha</label>
-                    <input
-                        type="password"
-                        id="senha"
-                        name="senha"
-                        autocomplete="current-password"
-                        required
-                    >
+                    <input type="password" id="senha" name="senha" autocomplete="current-password" required>
 
                     <button type="submit" id="entrar">Entrar</button>
                 </form>
@@ -55,8 +43,66 @@
                         <h2 id="titulo-substantivos">Substantivos</h2>
                         <p>Registros atuais do Realtime Database.</p>
                     </div>
-                    <span id="totalSubstantivos" class="contador"></span>
+
+                    <div class="acoes-cabecalho">
+                        <span id="totalSubstantivos" class="contador"></span>
+                        <button type="button" id="novoSubstantivo">+ Novo substantivo</button>
+                    </div>
                 </div>
+
+                <form id="formSubstantivo" class="form-substantivo" hidden>
+                    <div class="form-substantivo-topo">
+                        <h3>Novo substantivo</h3>
+                        <button type="button" id="cancelarNovoSubstantivo" class="secundario">Cancelar</button>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="campo">
+                            <label for="artigoSubstantivo">Artigo</label>
+                            <select id="artigoSubstantivo" required>
+                                <option value="">Selecione</option>
+                                <option value="der">der</option>
+                                <option value="die">die</option>
+                                <option value="das">das</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="nomeSubstantivo">Substantivo</label>
+                            <input type="text" id="nomeSubstantivo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="traducaoSubstantivo">Tradução</label>
+                            <input type="text" id="traducaoSubstantivo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="pluralSubstantivo">Plural</label>
+                            <input type="text" id="pluralSubstantivo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="generoOpostoSubstantivo">Gênero oposto</label>
+                            <input type="text" id="generoOpostoSubstantivo" autocomplete="off">
+                        </div>
+
+                        <div class="campo">
+                            <label for="pluralGeneroOpostoSubstantivo">Plural do gênero oposto</label>
+                            <input type="text" id="pluralGeneroOpostoSubstantivo" autocomplete="off">
+                        </div>
+
+                        <div class="campo campo-largo">
+                            <label for="observacaoSubstantivo">Observação</label>
+                            <textarea id="observacaoSubstantivo" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-acoes">
+                        <button type="submit" id="salvarSubstantivo">Salvar</button>
+                        <span id="mensagemSubstantivo" class="mensagem-form" role="status" aria-live="polite"></span>
+                    </div>
+                </form>
 
                 <div id="carregandoSubstantivos" class="estado-lista" role="status">
                     Carregando substantivos...
@@ -93,6 +139,6 @@
         </section>
     </main>
 
-    <script type="module" src="js/auth.js?v=20260919-2"></script>
+    <script type="module" src="js/auth.js?v=20260919-3"></script>
 </body>
 </html>
