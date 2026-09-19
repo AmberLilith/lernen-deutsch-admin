@@ -100,8 +100,8 @@ button {
 }
 
 button:disabled {
-    opacity: 0.65;
-    cursor: wait;
+    opacity: 0.55;
+    cursor: default;
 }
 
 button.secundario {
@@ -199,6 +199,23 @@ button.secundario {
     border-bottom: 0;
 }
 
+.paginacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e4e7eb;
+}
+
+.paginacao span {
+    min-width: 110px;
+    text-align: center;
+    color: #52606d;
+    font-size: 0.92rem;
+}
+
 @media (max-width: 640px) {
     .painel-page {
         width: min(100% - 20px, 1180px);
@@ -217,6 +234,14 @@ button.secundario {
 
     .painel-card {
         padding: 18px;
+    }
+
+    .paginacao {
+        gap: 8px;
+    }
+
+    .paginacao button {
+        padding: 10px 12px;
     }
 }
 
