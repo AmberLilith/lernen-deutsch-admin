@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-5">
+    <link rel="stylesheet" href="css/style.css?v=20260919-6">
 </head>
 <body>
     <main class="app-shell">
@@ -104,6 +104,17 @@
                     </div>
                 </form>
 
+                <div class="busca-substantivos">
+                    <input
+                        type="search"
+                        id="buscaSubstantivos"
+                        placeholder="Buscar por substantivo ou tradução..."
+                        autocomplete="off"
+                        aria-label="Buscar substantivos"
+                    >
+                    <span id="resultadoBuscaSubstantivos" class="resultado-busca"></span>
+                </div>
+
                 <div id="carregandoSubstantivos" class="estado-lista" role="status">
                     Carregando substantivos...
                 </div>
@@ -140,6 +151,6 @@
         </section>
     </main>
 
-    <script type="module" src="js/auth.js?v=20260919-5"></script>
+    <script type="module" src="js/auth.js?v=20260919-6"></script>
 </body>
 </html>
