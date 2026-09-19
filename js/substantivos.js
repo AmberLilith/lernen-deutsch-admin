@@ -1,9 +1,10 @@
-import { database } from "./firebase.js?v=20260919-3";
+import { database } from "./firebase.js?v=20260919-4";
 import {
     ref,
     onValue,
     get,
-    set
+    set,
+    update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const REGISTROS_POR_PAGINA = 20;
@@ -13,7 +14,9 @@ let registros = [];
 let paginaAtual = 1;
 let controlesConfigurados = false;
 let cadastroConfigurado = false;
-let substantivoRecemCriado = null;
+let substantivoEmFoco = null;
+let modoFormulario = "novo";
+let substantivoOriginal = null;
 
 function criarLinha(substantivo, item) {
     const linha = document.createElement("tr");
@@ -30,7 +33,17 @@ function criarLinha(substantivo, item) {
     const plural = document.createElement("td");
     plural.textContent = item.plural || "";
 
-    linha.append(artigo, nome, traducao, plural);
+    const acoes = document.createElement("td");
+    acoes.className = "celula-acoes";
+
+    const editar = document.createElement("button");
+    editar.type = "button";
+    editar.className = "botao-editar";
+    editar.textContent = "Editar";
+    editar.addEventListener("click", () => abrirEdicao(substantivo, item));
+
+    acoes.appendChild(editar);
+    linha.append(artigo, nome, traducao, plural, acoes);
     return linha;
 }
 
@@ -99,6 +112,108 @@ function capitalizarPrimeiraLetra(texto) {
     return texto.charAt(0).toLocaleUpperCase("de-DE") + texto.slice(1);
 }
 
+function prepararNovoSubstantivo() {
+    const form = document.getElementById("formSubstantivo");
+    form.reset();
+    modoFormulario = "novo";
+    substantivoOriginal = null;
+    document.getElementById("tituloFormSubstantivo").textContent = "Novo substantivo";
+    document.getElementById("salvarSubstantivo").textContent = "Salvar";
+    definirMensagemCadastro("");
+    form.hidden = false;
+    document.getElementById("artigoSubstantivo").focus();
+}
+
+function abrirEdicao(substantivo, item) {
+    const form = document.getElementById("formSubstantivo");
+
+    modoFormulario = "editar";
+    substantivoOriginal = substantivo;
+
+    document.getElementById("tituloFormSubstantivo").textContent = `Editar: ${substantivo}`;
+    document.getElementById("artigoSubstantivo").value = item.artigo || "";
+    document.getElementById("nomeSubstantivo").value = substantivo;
+    document.getElementById("traducaoSubstantivo").value = item.traducao || "";
+    document.getElementById("pluralSubstantivo").value = item.plural || "";
+    document.getElementById("generoOpostoSubstantivo").value = item.generoOposto || "";
+    document.getElementById("pluralGeneroOpostoSubstantivo").value = item.pluralGeneroOposto || "";
+    document.getElementById("observacaoSubstantivo").value = item.observacao || "";
+
+    definirMensagemCadastro("");
+    form.hidden = false;
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function cancelarFormulario() {
+    const form = document.getElementById("formSubstantivo");
+    form.reset();
+    form.hidden = true;
+    modoFormulario = "novo";
+    substantivoOriginal = null;
+    document.getElementById("tituloFormSubstantivo").textContent = "Novo substantivo";
+    document.getElementById("salvarSubstantivo").textContent = "Salvar";
+    definirMensagemCadastro("");
+}
+
+function montarDadosFormulario() {
+    const artigo = document.getElementById("artigoSubstantivo").value;
+    const substantivo = capitalizarPrimeiraLetra(
+        document.getElementById("nomeSubstantivo").value.trim()
+    );
+    const traducao = document.getElementById("traducaoSubstantivo").value.trim();
+    const plural = document.getElementById("pluralSubstantivo").value.trim();
+    const generoOposto = document.getElementById("generoOpostoSubstantivo").value.trim();
+    const pluralGeneroOposto = document.getElementById("pluralGeneroOpostoSubstantivo").value.trim();
+    const observacao = document.getElementById("observacaoSubstantivo").value.trim();
+
+    const dados = {
+        artigo,
+        traducao,
+        plural
+    };
+
+    if (generoOposto) dados.generoOposto = generoOposto;
+    if (pluralGeneroOposto) dados.pluralGeneroOposto = pluralGeneroOposto;
+    if (observacao) dados.observacao = observacao;
+
+    return { substantivo, dados };
+}
+
+async function salvarNovo(substantivo, dados) {
+    const caminho = ref(database, `substantivos/${substantivo}`);
+    const existente = await get(caminho);
+
+    if (existente.exists()) {
+        throw new Error("SUBSTANTIVO_EXISTENTE");
+    }
+
+    await set(caminho, dados);
+}
+
+async function salvarEdicao(substantivo, dados) {
+    if (!substantivoOriginal) {
+        throw new Error("SUBSTANTIVO_ORIGINAL_AUSENTE");
+    }
+
+    if (substantivo === substantivoOriginal) {
+        await set(ref(database, `substantivos/${substantivo}`), dados);
+        return;
+    }
+
+    const novoCaminho = ref(database, `substantivos/${substantivo}`);
+    const existente = await get(novoCaminho);
+
+    if (existente.exists()) {
+        throw new Error("SUBSTANTIVO_EXISTENTE");
+    }
+
+    const alteracoes = {};
+    alteracoes[`substantivos/${substantivo}`] = dados;
+    alteracoes[`substantivos/${substantivoOriginal}`] = null;
+
+    await update(ref(database), alteracoes);
+}
+
 function configurarCadastro() {
     if (cadastroConfigurado) return;
 
@@ -107,69 +222,56 @@ function configurarCadastro() {
     const form = document.getElementById("formSubstantivo");
     const botaoSalvar = document.getElementById("salvarSubstantivo");
 
-    botaoNovo.addEventListener("click", () => {
-        form.hidden = false;
-        definirMensagemCadastro("");
-        document.getElementById("artigoSubstantivo").focus();
-    });
-
-    botaoCancelar.addEventListener("click", () => {
-        form.reset();
-        form.hidden = true;
-        definirMensagemCadastro("");
-    });
+    botaoNovo.addEventListener("click", prepararNovoSubstantivo);
+    botaoCancelar.addEventListener("click", cancelarFormulario);
 
     form.addEventListener("submit", async event => {
         event.preventDefault();
         definirMensagemCadastro("");
 
-        const artigo = document.getElementById("artigoSubstantivo").value;
-        const substantivo = capitalizarPrimeiraLetra(
-            document.getElementById("nomeSubstantivo").value.trim()
-        );
-        const traducao = document.getElementById("traducaoSubstantivo").value.trim();
-        const plural = document.getElementById("pluralSubstantivo").value.trim();
-        const generoOposto = document.getElementById("generoOpostoSubstantivo").value.trim();
-        const pluralGeneroOposto = document.getElementById("pluralGeneroOpostoSubstantivo").value.trim();
-        const observacao = document.getElementById("observacaoSubstantivo").value.trim();
+        const { substantivo, dados } = montarDadosFormulario();
 
         if (/[.#$\/\[\]]/.test(substantivo)) {
             definirMensagemCadastro("O substantivo contém um caractere que não pode ser usado no banco.");
             return;
         }
 
-        const caminho = ref(database, `substantivos/${substantivo}`);
-
         botaoSalvar.disabled = true;
-        botaoSalvar.textContent = "Salvando...";
+        botaoSalvar.textContent = modoFormulario === "editar" ? "Salvando..." : "Salvando...";
 
         try {
-            const existente = await get(caminho);
+            const estavaEditando = modoFormulario === "editar";
 
-            if (existente.exists()) {
-                definirMensagemCadastro("Esse substantivo já está cadastrado.");
-                return;
+            if (estavaEditando) {
+                await salvarEdicao(substantivo, dados);
+            } else {
+                await salvarNovo(substantivo, dados);
             }
 
-            const dados = {
-                artigo,
-                traducao,
-                plural
-            };
-
-            if (generoOposto) dados.generoOposto = generoOposto;
-            if (pluralGeneroOposto) dados.pluralGeneroOposto = pluralGeneroOposto;
-            if (observacao) dados.observacao = observacao;
-
-            substantivoRecemCriado = substantivo;
-            await set(caminho, dados);
-
+            substantivoEmFoco = substantivo;
             form.reset();
-            definirMensagemCadastro(`${substantivo} cadastrado com sucesso.`, true);
+            modoFormulario = "novo";
+            substantivoOriginal = null;
+            document.getElementById("tituloFormSubstantivo").textContent = "Novo substantivo";
+            definirMensagemCadastro(
+                estavaEditando
+                    ? `${substantivo} atualizado com sucesso.`
+                    : `${substantivo} cadastrado com sucesso.`,
+                true
+            );
         } catch (error) {
-            console.error("Erro ao cadastrar substantivo:", error);
-            substantivoRecemCriado = null;
-            definirMensagemCadastro("Não foi possível cadastrar o substantivo.");
+            console.error("Erro ao salvar substantivo:", error);
+
+            if (error.message === "SUBSTANTIVO_EXISTENTE") {
+                definirMensagemCadastro("Já existe um substantivo com esse nome.");
+            } else {
+                substantivoEmFoco = null;
+                definirMensagemCadastro(
+                    modoFormulario === "editar"
+                        ? "Não foi possível atualizar o substantivo."
+                        : "Não foi possível cadastrar o substantivo."
+                );
+            }
         } finally {
             botaoSalvar.disabled = false;
             botaoSalvar.textContent = "Salvar";
@@ -223,16 +325,16 @@ export function iniciarListaSubstantivos() {
             registros = Object.entries(dados)
                 .sort(([a], [b]) => a.localeCompare(b, "de"));
 
-            if (substantivoRecemCriado) {
+            if (substantivoEmFoco) {
                 const indice = registros.findIndex(
-                    ([substantivo]) => substantivo === substantivoRecemCriado
+                    ([substantivo]) => substantivo === substantivoEmFoco
                 );
 
                 if (indice >= 0) {
                     paginaAtual = Math.floor(indice / REGISTROS_POR_PAGINA) + 1;
                 }
 
-                substantivoRecemCriado = null;
+                substantivoEmFoco = null;
             }
 
             total.textContent = `${registros.length} substantivo${registros.length === 1 ? "" : "s"}`;
@@ -262,12 +364,15 @@ export function pararListaSubstantivos() {
 
     registros = [];
     paginaAtual = 1;
-    substantivoRecemCriado = null;
+    substantivoEmFoco = null;
+    modoFormulario = "novo";
+    substantivoOriginal = null;
 
     const form = document.getElementById("formSubstantivo");
     if (form) {
         form.reset();
         form.hidden = true;
+        document.getElementById("tituloFormSubstantivo").textContent = "Novo substantivo";
         definirMensagemCadastro("");
     }
 }
