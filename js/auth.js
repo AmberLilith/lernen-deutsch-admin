@@ -4,16 +4,21 @@ import {
     signOut,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+    iniciarListaSubstantivos,
+    pararListaSubstantivos
+} from "./substantivos.js";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 
+const loginArea = document.getElementById("loginArea");
+const painelArea = document.getElementById("painelArea");
 const form = document.getElementById("loginForm");
 const email = document.getElementById("email");
 const senha = document.getElementById("senha");
 const entrar = document.getElementById("entrar");
 const sair = document.getElementById("sair");
 const mensagem = document.getElementById("mensagem");
-const sessaoAtiva = document.getElementById("sessaoAtiva");
 
 function definirMensagem(texto, sucesso = false) {
     mensagem.textContent = texto;
@@ -21,8 +26,8 @@ function definirMensagem(texto, sucesso = false) {
 }
 
 function mostrarSessaoAutenticada(autenticada) {
-    form.hidden = autenticada;
-    sessaoAtiva.hidden = !autenticada;
+    loginArea.hidden = autenticada;
+    painelArea.hidden = !autenticada;
 }
 
 function traduzirErro(codigo) {
@@ -58,7 +63,6 @@ form.addEventListener("submit", async event => {
         }
 
         senha.value = "";
-        definirMensagem("Autenticação concluída.", true);
     } catch (error) {
         definirMensagem(traduzirErro(error.code));
     } finally {
@@ -68,12 +72,14 @@ form.addEventListener("submit", async event => {
 });
 
 sair.addEventListener("click", async () => {
+    pararListaSubstantivos();
     definirMensagem("");
     await signOut(auth);
 });
 
 onAuthStateChanged(auth, async user => {
     if (user && user.uid !== ADMIN_UID) {
+        pararListaSubstantivos();
         await signOut(auth);
         mostrarSessaoAutenticada(false);
         definirMensagem("Esta conta não tem acesso ao painel.");
@@ -84,8 +90,9 @@ onAuthStateChanged(auth, async user => {
     mostrarSessaoAutenticada(autenticada);
 
     if (autenticada) {
-        definirMensagem("Autenticação concluída.", true);
-    } else if (mensagem.classList.contains("sucesso")) {
         definirMensagem("");
+        iniciarListaSubstantivos();
+    } else {
+        pararListaSubstantivos();
     }
 });
