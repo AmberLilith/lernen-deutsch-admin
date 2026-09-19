@@ -396,3 +396,42 @@ button.secundario {
 .botao-excluir:hover {
     background: #fff4f4;
 }
+
+
+.busca-substantivos {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 20px;
+}
+
+.busca-substantivos input {
+    width: min(100%, 420px);
+    padding: 11px 13px;
+    border: 1px solid #b8c2cc;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+}
+
+.busca-substantivos input:focus {
+    outline: 2px solid #52606d;
+    outline-offset: 2px;
+}
+
+.resultado-busca {
+    color: #52606d;
+    font-size: 0.92rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .busca-substantivos {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .busca-substantivos input {
+        width: 100%;
+    }
+}
