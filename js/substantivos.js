@@ -1,10 +1,11 @@
-import { database } from "./firebase.js?v=20260919-4";
+import { database } from "./firebase.js?v=20260919-5";
 import {
     ref,
     onValue,
     get,
     set,
-    update
+    update,
+    remove
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const REGISTROS_POR_PAGINA = 20;
@@ -17,6 +18,30 @@ let cadastroConfigurado = false;
 let substantivoEmFoco = null;
 let modoFormulario = "novo";
 let substantivoOriginal = null;
+
+async function excluirSubstantivo(substantivo, botao) {
+    const confirmado = window.confirm(
+        `Excluir "${substantivo}"? Esta ação não pode ser desfeita.`
+    );
+
+    if (!confirmado) return;
+
+    botao.disabled = true;
+    botao.textContent = "Excluindo...";
+
+    try {
+        await remove(ref(database, `substantivos/${substantivo}`));
+
+        if (modoFormulario === "editar" && substantivoOriginal === substantivo) {
+            cancelarFormulario();
+        }
+    } catch (error) {
+        console.error("Erro ao excluir substantivo:", error);
+        window.alert("Não foi possível excluir o substantivo.");
+        botao.disabled = false;
+        botao.textContent = "Excluir";
+    }
+}
 
 function criarLinha(substantivo, item) {
     const linha = document.createElement("tr");
@@ -36,13 +61,23 @@ function criarLinha(substantivo, item) {
     const acoes = document.createElement("td");
     acoes.className = "celula-acoes";
 
+    const grupoAcoes = document.createElement("div");
+    grupoAcoes.className = "acoes-linha";
+
     const editar = document.createElement("button");
     editar.type = "button";
     editar.className = "botao-editar";
     editar.textContent = "Editar";
     editar.addEventListener("click", () => abrirEdicao(substantivo, item));
 
-    acoes.appendChild(editar);
+    const excluir = document.createElement("button");
+    excluir.type = "button";
+    excluir.className = "botao-excluir";
+    excluir.textContent = "Excluir";
+    excluir.addEventListener("click", () => excluirSubstantivo(substantivo, excluir));
+
+    grupoAcoes.append(editar, excluir);
+    acoes.appendChild(grupoAcoes);
     linha.append(artigo, nome, traducao, plural, acoes);
     return linha;
 }
