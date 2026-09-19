@@ -15,7 +15,7 @@ import {
 import {
     iniciarListaAdjetivos,
     pararListaAdjetivos
-} from "./adjetivos.js?v=20260919-9";
+} from "./adjetivos.js?v=20260919-10";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 

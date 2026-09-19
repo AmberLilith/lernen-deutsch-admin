@@ -39,12 +39,12 @@ function atualizarFiltro(reiniciarPagina = false) {
         resultadoBusca.textContent = "";
     } else {
         registrosFiltrados = registros.filter(([adjetivo, item]) => {
-            return [
-                adjetivo,
-                item.traducao,
-                item.comparativo,
-                item.superlativo
-            ].some(valor => normalizar(valor).includes(termoNormalizado));
+            const adjetivoOk =
+                normalizar(adjetivo).includes(termoNormalizado);
+            const traducaoOk =
+                normalizar(item.traducao).includes(termoNormalizado);
+
+            return adjetivoOk || traducaoOk;
         });
 
         resultadoBusca.textContent =
