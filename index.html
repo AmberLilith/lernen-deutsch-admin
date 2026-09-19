@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-6">
+    <link rel="stylesheet" href="css/style.css?v=20260919-7">
 </head>
 <body>
     <main class="app-shell">
@@ -148,9 +148,153 @@
                     <button type="button" id="proximaPagina" class="secundario">Próxima →</button>
                 </div>
             </section>
+
+            <section class="painel-card" aria-labelledby="titulo-verbos">
+                <div class="painel-card-header">
+                    <div>
+                        <h2 id="titulo-verbos">Verbos</h2>
+                        <p>Registros atuais do Realtime Database.</p>
+                    </div>
+
+                    <div class="acoes-cabecalho">
+                        <span id="totalVerbos" class="contador"></span>
+                        <button type="button" id="novoVerbo">+ Novo verbo</button>
+                    </div>
+                </div>
+
+                <form id="formVerbo" class="form-verbo" hidden>
+                    <div class="form-verbo-topo">
+                        <h3 id="tituloFormVerbo">Novo verbo</h3>
+                        <button type="button" id="cancelarNovoVerbo" class="secundario">Cancelar</button>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="campo">
+                            <label for="nomeVerbo">Verbo</label>
+                            <input type="text" id="nomeVerbo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="traducaoVerbo">Tradução</label>
+                            <input type="text" id="traducaoVerbo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="partizipVerbo">Partizip II</label>
+                            <input type="text" id="partizipVerbo" autocomplete="off" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="auxiliarVerbo">Auxiliar</label>
+                            <select id="auxiliarVerbo" required>
+                                <option value="">Selecione</option>
+                                <option value="haben">haben</option>
+                                <option value="sein">sein</option>
+                                <option value="sein / haben">sein / haben</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="regularidadeVerbo">Regularidade</label>
+                            <select id="regularidadeVerbo" required>
+                                <option value="regular">Regular</option>
+                                <option value="irregular">Irregular</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="prefixoVerbo">Prefixo</label>
+                            <input type="text" id="prefixoVerbo" autocomplete="off" placeholder="Ex.: an, auf, ein, be">
+                        </div>
+
+                        <fieldset class="campo campo-largo caracteristicas-verbo">
+                            <legend>Características gramaticais</legend>
+                            <div class="checkbox-grid">
+                                <label><input type="checkbox" id="separavelVerbo"> Separável</label>
+                                <label><input type="checkbox" id="inseparavelVerbo"> Inseparável</label>
+                                <label><input type="checkbox" id="reflexivoVerbo"> Reflexivo</label>
+                                <label><input type="checkbox" id="preposicionalVerbo"> Preposicional</label>
+                                <label><input type="checkbox" id="modalVerbo"> Modal</label>
+                                <label><input type="checkbox" id="verboAuxiliarVerbo"> Verbo auxiliar</label>
+                                <label><input type="checkbox" id="impessoalVerbo"> Impessoal</label>
+                            </div>
+                        </fieldset>
+
+                        <div class="campo campo-largo">
+                            <label for="regenciasVerbo">Regências</label>
+                            <textarea id="regenciasVerbo" rows="3" placeholder="Uma por linha. Ex.: auf | Akkusativ"></textarea>
+                            <small class="ajuda-campo">Formato: preposição | caso. Pode informar mais de uma linha.</small>
+                        </div>
+
+                        <div id="camposIrregulares" class="campos-irregulares campo-largo" hidden>
+                            <div class="campo">
+                                <label for="presenteVerbo">Präsens</label>
+                                <textarea id="presenteVerbo" rows="7" placeholder="ich nehme&#10;du nimmst&#10;er/sie/es nimmt&#10;wir nehmen&#10;ihr nehmt&#10;sie/Sie nehmen"></textarea>
+                                <small class="ajuda-campo">Cole seis linhas, na ordem: ich, du, er/sie/es, wir, ihr, sie/Sie.</small>
+                            </div>
+
+                            <div class="campo">
+                                <label for="preteritoVerbo">Präteritum</label>
+                                <textarea id="preteritoVerbo" rows="7" placeholder="ich nahm&#10;du nahmst&#10;er/sie/es nahm&#10;wir nahmen&#10;ihr nahmt&#10;sie/Sie nahmen"></textarea>
+                                <small class="ajuda-campo">Os pronomes podem vir junto. O painel os remove antes de salvar.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-acoes">
+                        <button type="submit" id="salvarVerbo">Salvar</button>
+                        <span id="mensagemVerbo" class="mensagem-form" role="status" aria-live="polite"></span>
+                    </div>
+                </form>
+
+                <div class="busca-verbos">
+                    <input
+                        type="search"
+                        id="buscaVerbos"
+                        placeholder="Buscar por verbo ou tradução..."
+                        autocomplete="off"
+                        aria-label="Buscar verbos"
+                    >
+                    <span id="resultadoBuscaVerbos" class="resultado-busca"></span>
+                </div>
+
+                <div id="carregandoVerbos" class="estado-lista" role="status">
+                    Carregando verbos...
+                </div>
+
+                <div id="erroVerbos" class="estado-lista erro" hidden>
+                    Não foi possível carregar os verbos.
+                </div>
+
+                <div id="listaVerbosVazia" class="estado-lista" hidden>
+                    Nenhum verbo cadastrado.
+                </div>
+
+                <div class="tabela-wrapper">
+                    <table class="tabela-verbos">
+                        <thead>
+                            <tr>
+                                <th>Verbo</th>
+                                <th>Tradução</th>
+                                <th>Regularidade</th>
+                                <th>Auxiliar</th>
+                                <th>Características</th>
+                                <th class="coluna-acoes">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaVerbos"></tbody>
+                    </table>
+                </div>
+
+                <div id="paginacaoVerbos" class="paginacao" hidden>
+                    <button type="button" id="paginaAnteriorVerbos" class="secundario">← Anterior</button>
+                    <span id="indicadorPaginaVerbos"></span>
+                    <button type="button" id="proximaPaginaVerbos" class="secundario">Próxima →</button>
+                </div>
+            </section>
         </section>
     </main>
 
-    <script type="module" src="js/auth.js?v=20260919-6"></script>
+    <script type="module" src="js/auth.js?v=20260919-7"></script>
 </body>
 </html>

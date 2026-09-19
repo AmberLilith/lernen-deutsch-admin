@@ -8,6 +8,10 @@ import {
     iniciarListaSubstantivos,
     pararListaSubstantivos
 } from "./substantivos.js?v=20260919-6";
+import {
+    iniciarListaVerbos,
+    pararListaVerbos
+} from "./verbos.js?v=20260919-7";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 
@@ -73,6 +77,7 @@ form.addEventListener("submit", async event => {
 
 sair.addEventListener("click", async () => {
     pararListaSubstantivos();
+    pararListaVerbos();
     definirMensagem("");
     await signOut(auth);
 });
@@ -80,6 +85,7 @@ sair.addEventListener("click", async () => {
 onAuthStateChanged(auth, async user => {
     if (user && user.uid !== ADMIN_UID) {
         pararListaSubstantivos();
+        pararListaVerbos();
         await signOut(auth);
         mostrarSessaoAutenticada(false);
         definirMensagem("Esta conta não tem acesso ao painel.");
@@ -92,7 +98,9 @@ onAuthStateChanged(auth, async user => {
     if (autenticada) {
         definirMensagem("");
         iniciarListaSubstantivos();
+        iniciarListaVerbos();
     } else {
         pararListaSubstantivos();
+        pararListaVerbos();
     }
 });

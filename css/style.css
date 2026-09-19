@@ -435,3 +435,155 @@ button.secundario {
         width: 100%;
     }
 }
+
+
+.painel-card + .painel-card {
+    margin-top: 24px;
+}
+
+.form-verbo {
+    margin: 0 0 24px;
+    padding: 20px;
+    border: 1px solid #d9e0e7;
+    border-radius: 10px;
+    background: #f8fafb;
+}
+
+.form-verbo-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.form-verbo input,
+.form-verbo select,
+.form-verbo textarea {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #b8c2cc;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+}
+
+.form-verbo input:focus,
+.form-verbo select:focus,
+.form-verbo textarea:focus {
+    outline: 2px solid #52606d;
+    outline-offset: 2px;
+}
+
+.form-verbo textarea {
+    resize: vertical;
+}
+
+.caracteristicas-verbo {
+    margin: 0;
+    padding: 14px 16px 16px;
+    border: 1px solid #d9e0e7;
+    border-radius: 8px;
+}
+
+.caracteristicas-verbo legend {
+    padding: 0 6px;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 18px;
+}
+
+.checkbox-grid label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.checkbox-grid input {
+    width: auto;
+    margin: 0;
+}
+
+.ajuda-campo {
+    color: #52606d;
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.campos-irregulares {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.busca-verbos {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 20px;
+}
+
+.busca-verbos input {
+    width: min(100%, 420px);
+    padding: 11px 13px;
+    border: 1px solid #b8c2cc;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+}
+
+.busca-verbos input:focus {
+    outline: 2px solid #52606d;
+    outline-offset: 2px;
+}
+
+.tabela-verbos {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-verbos th,
+.tabela-verbos td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #e4e7eb;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tabela-verbos th {
+    color: #52606d;
+    font-size: 0.84rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.tabela-verbos tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+@media (max-width: 640px) {
+    .form-verbo-topo,
+    .busca-verbos {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .form-verbo-topo .secundario {
+        align-self: flex-start;
+    }
+
+    .busca-verbos input {
+        width: 100%;
+    }
+
+    .checkbox-grid,
+    .campos-irregulares {
+        grid-template-columns: 1fr;
+    }
+}
