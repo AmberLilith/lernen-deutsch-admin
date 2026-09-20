@@ -234,6 +234,12 @@ function atualizarCamposIrregulares() {
     document.getElementById("preteritoVerbo").required = irregular;
 }
 
+function atualizarObrigatoriedadePrefixo() {
+    const separavel = document.getElementById("separavelVerbo").checked;
+    document.getElementById("prefixoVerbo").required = separavel;
+}
+
+
 function prepararNovoVerbo() {
     const form = document.getElementById("formVerbo");
 
@@ -245,6 +251,7 @@ function prepararNovoVerbo() {
     document.getElementById("salvarVerbo").textContent = "Salvar";
     definirMensagemCadastro("");
     atualizarCamposIrregulares();
+    atualizarObrigatoriedadePrefixo();
     form.hidden = false;
     document.getElementById("nomeVerbo").focus();
 }
@@ -295,6 +302,7 @@ function abrirEdicao(verbo, item) {
         item.regularidade === "irregular" ? formatarConjugacao(item.preterito) : "";
 
     atualizarCamposIrregulares();
+    atualizarObrigatoriedadePrefixo();
     definirMensagemCadastro("");
     form.hidden = false;
     form.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -312,6 +320,7 @@ function cancelarFormulario() {
     document.getElementById("salvarVerbo").textContent = "Salvar";
     definirMensagemCadastro("");
     atualizarCamposIrregulares();
+    atualizarObrigatoriedadePrefixo();
 }
 
 function removerRotuloPessoa(linha, indice) {
@@ -492,10 +501,12 @@ function configurarCadastro() {
     const form = document.getElementById("formVerbo");
     const botaoSalvar = document.getElementById("salvarVerbo");
     const regularidade = document.getElementById("regularidadeVerbo");
+    const separavel = document.getElementById("separavelVerbo");
 
     botaoNovo.addEventListener("click", prepararNovoVerbo);
     botaoCancelar.addEventListener("click", cancelarFormulario);
     regularidade.addEventListener("change", atualizarCamposIrregulares);
+    separavel.addEventListener("change", atualizarObrigatoriedadePrefixo);
 
     form.addEventListener("submit", async event => {
         event.preventDefault();
@@ -531,6 +542,14 @@ function configurarCadastro() {
             return;
         }
 
+        if (dados.separavel && !dados.prefixo) {
+            definirMensagemCadastro(
+                "Informe o prefixo do verbo separável."
+            );
+            document.getElementById("prefixoVerbo").focus();
+            return;
+        }
+
         botaoSalvar.disabled = true;
         botaoSalvar.textContent = "Salvando...";
 
@@ -550,6 +569,7 @@ function configurarCadastro() {
             document.getElementById("regularidadeVerbo").value = "regular";
             document.getElementById("tituloFormVerbo").textContent = "Novo verbo";
             atualizarCamposIrregulares();
+            atualizarObrigatoriedadePrefixo();
 
             definirMensagemCadastro(
                 estavaEditando
@@ -686,5 +706,6 @@ export function pararListaVerbos() {
         document.getElementById("tituloFormVerbo").textContent = "Novo verbo";
         definirMensagemCadastro("");
         atualizarCamposIrregulares();
+        atualizarObrigatoriedadePrefixo();
     }
 }

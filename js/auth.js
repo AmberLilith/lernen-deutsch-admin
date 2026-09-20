@@ -11,7 +11,7 @@ import {
 import {
     iniciarListaVerbos,
     pararListaVerbos
-} from "./verbos.js?v=20260919-7";
+} from "./verbos.js?v=20260920-1";
 import {
     iniciarListaAdjetivos,
     pararListaAdjetivos
