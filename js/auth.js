@@ -11,15 +11,15 @@ import {
 import {
     iniciarListaVerbos,
     pararListaVerbos
-} from "./verbos.js?v=20260921-2";
+} from "./verbos.js?v=20260921-3";
 import {
     iniciarListaAdjetivos,
     pararListaAdjetivos
-} from "./adjetivos.js?v=20260921-2";
+} from "./adjetivos.js?v=20260921-3";
 import {
     iniciarListaAdverbios,
     pararListaAdverbios
-} from "./adverbios.js?v=20260921-1";
+} from "./adverbios.js?v=20260921-2";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 

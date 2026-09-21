@@ -76,6 +76,7 @@ async function excluirAdverbio(adverbio, botao) {
 }
 
 function criarLinha(adverbio, item) {
+    const fragmento = document.createDocumentFragment();
     const linha = document.createElement("tr");
 
     const nome = document.createElement("td");
@@ -86,6 +87,52 @@ function criarLinha(adverbio, item) {
 
     const tipo = document.createElement("td");
     tipo.textContent = item.tipo || "";
+
+    const observacao = document.createElement("td");
+    observacao.className = "celula-observacao";
+
+    const textoObservacao = String(item.observacao || "").trim();
+    let linhaObservacao = null;
+
+    if (textoObservacao) {
+        const botaoObservacao = document.createElement("button");
+        botaoObservacao.type = "button";
+        botaoObservacao.className = "botao-observacao";
+        botaoObservacao.textContent = "Ver";
+        botaoObservacao.setAttribute("aria-expanded", "false");
+
+        linhaObservacao = document.createElement("tr");
+        linhaObservacao.className = "linha-observacao";
+        linhaObservacao.hidden = true;
+
+        const detalhe = document.createElement("td");
+        detalhe.colSpan = 5;
+
+        const conteudo = document.createElement("div");
+        conteudo.className = "observacao-conteudo";
+
+        const rotulo = document.createElement("strong");
+        rotulo.textContent = "Observação:";
+
+        const texto = document.createElement("p");
+        texto.textContent = textoObservacao;
+
+        conteudo.append(rotulo, texto);
+        detalhe.appendChild(conteudo);
+        linhaObservacao.appendChild(detalhe);
+
+        botaoObservacao.addEventListener("click", () => {
+            const abrir = linhaObservacao.hidden;
+            linhaObservacao.hidden = !abrir;
+            botaoObservacao.textContent = abrir ? "Ocultar" : "Ver";
+            botaoObservacao.setAttribute("aria-expanded", String(abrir));
+        });
+
+        observacao.appendChild(botaoObservacao);
+    } else {
+        observacao.textContent = "—";
+        observacao.classList.add("sem-observacao");
+    }
 
     const acoes = document.createElement("td");
     acoes.className = "celula-acoes";
@@ -107,9 +154,12 @@ function criarLinha(adverbio, item) {
 
     grupoAcoes.append(editar, excluir);
     acoes.appendChild(grupoAcoes);
-    linha.append(nome, traducao, tipo, acoes);
+    linha.append(nome, traducao, tipo, observacao, acoes);
 
-    return linha;
+    fragmento.appendChild(linha);
+    if (linhaObservacao) fragmento.appendChild(linhaObservacao);
+
+    return fragmento;
 }
 
 function renderizarPagina() {
