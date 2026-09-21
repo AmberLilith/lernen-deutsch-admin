@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
-    <link rel="stylesheet" href="css/style.css?v=20260919-11">
+    <link rel="stylesheet" href="css/style.css?v=20260920-2">
 </head>
 <body>
     <main class="app-shell">
@@ -41,20 +41,76 @@
                 <button type="button" id="sair" class="secundario">Sair</button>
             </header>
 
-            <details class="painel-card painel-card-retratil">
-                <summary class="painel-card-header">
-                    <div>
-                        <h2 id="titulo-substantivos">Substantivos</h2>
-                        <p>Registros atuais do Realtime Database.</p>
-                    </div>
+            
+            <div class="painel-acessos" aria-label="Áreas administrativas">
 
-                    <div class="acoes-cabecalho">
-                        <span id="totalSubstantivos" class="contador"></span>
-                        <span class="indicador-retratil" aria-hidden="true"></span>
-                    </div>
-                </summary>
+            <button
+                type="button"
+                class="painel-acesso-card"
+                data-modal="modalSubstantivos"
+                aria-haspopup="dialog"
+            >
+                <span class="painel-acesso-texto">
+                    <strong>Substantivos</strong>
+                    <span>Gerenciar registros do Realtime Database.</span>
+                </span>
+                <span class="painel-acesso-meta">
+                    <span id="totalSubstantivos" class="contador"></span>
+                    <span class="painel-acesso-seta" aria-hidden="true">→</span>
+                </span>
+            </button>
 
-                <div class="acoes-secao">
+            <button
+                type="button"
+                class="painel-acesso-card"
+                data-modal="modalVerbos"
+                aria-haspopup="dialog"
+            >
+                <span class="painel-acesso-texto">
+                    <strong>Verbos</strong>
+                    <span>Gerenciar registros do Realtime Database.</span>
+                </span>
+                <span class="painel-acesso-meta">
+                    <span id="totalVerbos" class="contador"></span>
+                    <span class="painel-acesso-seta" aria-hidden="true">→</span>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="painel-acesso-card"
+                data-modal="modalAdjetivos"
+                aria-haspopup="dialog"
+            >
+                <span class="painel-acesso-texto">
+                    <strong>Adjetivos</strong>
+                    <span>Gerenciar registros do Realtime Database.</span>
+                </span>
+                <span class="painel-acesso-meta">
+                    <span id="totalAdjetivos" class="contador"></span>
+                    <span class="painel-acesso-seta" aria-hidden="true">→</span>
+                </span>
+            </button>
+            </div>
+
+
+            <dialog id="modalSubstantivos" class="modal-admin" aria-labelledby="tituloModalSubstantivos">
+                <div class="modal-admin-conteudo">
+                    <header class="modal-admin-header">
+                        <div>
+                            <div class="eyebrow">Gerenciamento</div>
+                            <h2 id="tituloModalSubstantivos">Substantivos</h2>
+                        </div>
+                        <button
+                            type="button"
+                            class="modal-admin-fechar"
+                            data-fechar-modal
+                            aria-label="Fechar"
+                        >×</button>
+                    </header>
+
+                    <div class="modal-admin-body">
+<div class="acoes-secao">
                     <button type="button" id="novoSubstantivo">+ Novo substantivo</button>
                 </div>
 
@@ -155,22 +211,27 @@
                     <span id="indicadorPagina"></span>
                     <button type="button" id="proximaPagina" class="secundario">Próxima →</button>
                 </div>
-            </details>
-
-            <details class="painel-card painel-card-retratil">
-                <summary class="painel-card-header">
-                    <div>
-                        <h2 id="titulo-verbos">Verbos</h2>
-                        <p>Registros atuais do Realtime Database.</p>
                     </div>
+                </div>
+            </dialog>
 
-                    <div class="acoes-cabecalho">
-                        <span id="totalVerbos" class="contador"></span>
-                        <span class="indicador-retratil" aria-hidden="true"></span>
-                    </div>
-                </summary>
+            <dialog id="modalVerbos" class="modal-admin" aria-labelledby="tituloModalVerbos">
+                <div class="modal-admin-conteudo">
+                    <header class="modal-admin-header">
+                        <div>
+                            <div class="eyebrow">Gerenciamento</div>
+                            <h2 id="tituloModalVerbos">Verbos</h2>
+                        </div>
+                        <button
+                            type="button"
+                            class="modal-admin-fechar"
+                            data-fechar-modal
+                            aria-label="Fechar"
+                        >×</button>
+                    </header>
 
-                <div class="acoes-secao">
+                    <div class="modal-admin-body">
+<div class="acoes-secao">
                     <button type="button" id="novoVerbo">+ Novo verbo</button>
                 </div>
 
@@ -303,22 +364,27 @@
                     <span id="indicadorPaginaVerbos"></span>
                     <button type="button" id="proximaPaginaVerbos" class="secundario">Próxima →</button>
                 </div>
-            </details>
-
-            <details class="painel-card painel-card-retratil">
-                <summary class="painel-card-header">
-                    <div>
-                        <h2 id="titulo-adjetivos">Adjetivos</h2>
-                        <p>Registros atuais do Realtime Database.</p>
                     </div>
+                </div>
+            </dialog>
 
-                    <div class="acoes-cabecalho">
-                        <span id="totalAdjetivos" class="contador"></span>
-                        <span class="indicador-retratil" aria-hidden="true"></span>
-                    </div>
-                </summary>
+            <dialog id="modalAdjetivos" class="modal-admin" aria-labelledby="tituloModalAdjetivos">
+                <div class="modal-admin-conteudo">
+                    <header class="modal-admin-header">
+                        <div>
+                            <div class="eyebrow">Gerenciamento</div>
+                            <h2 id="tituloModalAdjetivos">Adjetivos</h2>
+                        </div>
+                        <button
+                            type="button"
+                            class="modal-admin-fechar"
+                            data-fechar-modal
+                            aria-label="Fechar"
+                        >×</button>
+                    </header>
 
-                <div class="acoes-secao">
+                    <div class="modal-admin-body">
+<div class="acoes-secao">
                     <button type="button" id="novoAdjetivo">+ Novo adjetivo</button>
                 </div>
 
@@ -399,10 +465,14 @@
                     <span id="indicadorPaginaAdjetivos"></span>
                     <button type="button" id="proximaPaginaAdjetivos" class="secundario">Próxima →</button>
                 </div>
-            </details>
+                    </div>
+                </div>
+            </dialog>
+
         </section>
     </main>
 
+    <script type="module" src="js/painel.js?v=20260920-1"></script>
     <script type="module" src="js/auth.js?v=20260920-1"></script>
 </body>
 </html>
