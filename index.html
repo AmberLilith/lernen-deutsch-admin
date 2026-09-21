@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <link rel="stylesheet" href="css/style.css?v=20260920-2">
+    <link rel="stylesheet" href="css/style.css?v=20260921-2">
 </head>
 <body>
     <main class="app-shell">
@@ -89,6 +89,22 @@
                 </span>
                 <span class="painel-acesso-meta">
                     <span id="totalAdjetivos" class="contador"></span>
+                    <span class="painel-acesso-seta" aria-hidden="true">→</span>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="painel-acesso-card"
+                data-modal="modalAdverbios"
+                aria-haspopup="dialog"
+            >
+                <span class="painel-acesso-texto">
+                    <strong>Advérbios</strong>
+                    <span>Gerenciar registros do Realtime Database.</span>
+                </span>
+                <span class="painel-acesso-meta">
+                    <span id="totalAdverbios" class="contador"></span>
                     <span class="painel-acesso-seta" aria-hidden="true">→</span>
                 </span>
             </button>
@@ -300,6 +316,11 @@
                             <small class="ajuda-campo">Formato: preposição | caso. Pode informar mais de uma linha.</small>
                         </div>
 
+                        <div class="campo campo-largo">
+                            <label for="observacaoVerbo">Observação</label>
+                            <textarea id="observacaoVerbo" rows="4" placeholder="Observações, particularidades de uso, exemplos curtos..."></textarea>
+                        </div>
+
                         <div id="camposIrregulares" class="campos-irregulares campo-largo" hidden>
                             <div class="campo">
                                 <label for="presenteVerbo">Präsens</label>
@@ -415,6 +436,11 @@
                             <label for="superlativoAdjetivo">Superlativo</label>
                             <input type="text" id="superlativoAdjetivo" autocomplete="off" required>
                         </div>
+
+                        <div class="campo campo-largo">
+                            <label for="observacaoAdjetivo">Observação</label>
+                            <textarea id="observacaoAdjetivo" rows="4" placeholder="Observações, particularidades de uso, exemplos curtos..."></textarea>
+                        </div>
                     </div>
 
                     <div class="form-acoes">
@@ -470,10 +496,111 @@
                 </div>
             </dialog>
 
+            <dialog id="modalAdverbios" class="modal-admin" aria-labelledby="tituloModalAdverbios">
+                <div class="modal-admin-conteudo">
+                    <header class="modal-admin-header">
+                        <div>
+                            <div class="eyebrow">Gerenciamento</div>
+                            <h2 id="tituloModalAdverbios">Advérbios</h2>
+                        </div>
+                        <button
+                            type="button"
+                            class="modal-admin-fechar"
+                            data-fechar-modal
+                            aria-label="Fechar"
+                        >×</button>
+                    </header>
+
+                    <div class="modal-admin-body">
+                        <div class="acoes-secao">
+                            <button type="button" id="novoAdverbio">+ Novo advérbio</button>
+                        </div>
+
+                        <form id="formAdverbio" class="form-adverbio" hidden>
+                            <div class="form-adverbio-topo">
+                                <h3 id="tituloFormAdverbio">Novo advérbio</h3>
+                                <button type="button" id="cancelarNovoAdverbio" class="secundario">Cancelar</button>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="campo">
+                                    <label for="nomeAdverbio">Advérbio</label>
+                                    <input type="text" id="nomeAdverbio" autocomplete="off" required>
+                                </div>
+
+                                <div class="campo">
+                                    <label for="traducaoAdverbio">Tradução</label>
+                                    <input type="text" id="traducaoAdverbio" autocomplete="off" required>
+                                </div>
+
+                                <div class="campo campo-largo">
+                                    <label for="tipoAdverbio">Tipo</label>
+                                    <input type="text" id="tipoAdverbio" autocomplete="off" placeholder="Ex.: tempo, lugar, modo, frequência" required>
+                                    <small class="ajuda-campo">Para mais de um tipo, use barra. Ex.: lugar/tempo.</small>
+                                </div>
+
+                                <div class="campo campo-largo">
+                                    <label for="observacaoAdverbio">Observação</label>
+                                    <textarea id="observacaoAdverbio" rows="4" placeholder="Observações, particularidades de uso, exemplos curtos..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-acoes">
+                                <button type="submit" id="salvarAdverbio">Salvar</button>
+                                <span id="mensagemAdverbio" class="mensagem-form" role="status" aria-live="polite"></span>
+                            </div>
+                        </form>
+
+                        <div class="busca-adverbios">
+                            <input
+                                type="search"
+                                id="buscaAdverbios"
+                                placeholder="Buscar por advérbio, tradução ou tipo..."
+                                autocomplete="off"
+                                aria-label="Buscar advérbios"
+                            >
+                            <span id="resultadoBuscaAdverbios" class="resultado-busca"></span>
+                        </div>
+
+                        <div id="carregandoAdverbios" class="estado-lista" role="status">
+                            Carregando advérbios...
+                        </div>
+
+                        <div id="erroAdverbios" class="estado-lista erro" hidden>
+                            Não foi possível carregar os advérbios.
+                        </div>
+
+                        <div id="listaAdverbiosVazia" class="estado-lista" hidden>
+                            Nenhum advérbio cadastrado.
+                        </div>
+
+                        <div class="tabela-wrapper">
+                            <table class="tabela-adverbios">
+                                <thead>
+                                    <tr>
+                                        <th>Advérbio</th>
+                                        <th>Tradução</th>
+                                        <th>Tipo</th>
+                                        <th class="coluna-acoes">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaAdverbios"></tbody>
+                            </table>
+                        </div>
+
+                        <div id="paginacaoAdverbios" class="paginacao" hidden>
+                            <button type="button" id="paginaAnteriorAdverbios" class="secundario">← Anterior</button>
+                            <span id="indicadorPaginaAdverbios"></span>
+                            <button type="button" id="proximaPaginaAdverbios" class="secundario">Próxima →</button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+
         </section>
     </main>
 
     <script type="module" src="js/painel.js?v=20260920-1"></script>
-    <script type="module" src="js/auth.js?v=20260920-1"></script>
+    <script type="module" src="js/auth.js?v=20260921-2"></script>
 </body>
 </html>

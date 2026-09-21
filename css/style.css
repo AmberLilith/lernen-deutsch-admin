@@ -1012,3 +1012,115 @@ button.secundario {
         margin-right: 18px;
     }
 }
+
+
+/* Advérbios e observações dos formulários */
+.form-adjetivo textarea,
+.form-adverbio input,
+.form-adverbio textarea {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #b8c2cc;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+}
+
+.form-adjetivo textarea:focus,
+.form-adverbio input:focus,
+.form-adverbio textarea:focus {
+    outline: 2px solid #52606d;
+    outline-offset: 2px;
+}
+
+.form-adjetivo textarea,
+.form-adverbio textarea {
+    resize: vertical;
+}
+
+.form-adverbio {
+    margin: 0 0 24px;
+    padding: 20px;
+    border: 1px solid #d9e0e7;
+    border-radius: 10px;
+    background: #f8fafb;
+}
+
+.form-adverbio-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.busca-adverbios {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 20px;
+}
+
+.busca-adverbios input {
+    width: min(100%, 520px);
+    padding: 11px 13px;
+    border: 1px solid #b8c2cc;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+}
+
+.busca-adverbios input:focus {
+    outline: 2px solid #52606d;
+    outline-offset: 2px;
+}
+
+.tabela-adverbios {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-adverbios th,
+.tabela-adverbios td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #e4e7eb;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tabela-adverbios th {
+    color: #52606d;
+    font-size: 0.84rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.tabela-adverbios tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.modal-admin-body > .busca-adverbios {
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
+@media (max-width: 640px) {
+    .form-adverbio-topo,
+    .busca-adverbios {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .form-adverbio-topo .secundario {
+        align-self: flex-start;
+    }
+
+    .busca-adverbios input {
+        width: 100%;
+    }
+
+    .modal-admin-body > .busca-adverbios {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+}

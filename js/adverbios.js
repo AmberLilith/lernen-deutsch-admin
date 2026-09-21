@@ -17,20 +17,20 @@ let paginaAtual = 1;
 let controlesConfigurados = false;
 let cadastroConfigurado = false;
 let buscaConfigurada = false;
-let adjetivoEmFoco = null;
+let adverbioEmFoco = null;
 let modoFormulario = "novo";
-let adjetivoOriginal = null;
+let adverbioOriginal = null;
 
 function normalizar(texto) {
-    return (texto || "")
-        .toLowerCase()
+    return String(texto || "")
+        .toLocaleLowerCase("pt-BR")
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
 }
 
 function atualizarFiltro(reiniciarPagina = false) {
-    const campoBusca = document.getElementById("buscaAdjetivos");
-    const resultadoBusca = document.getElementById("resultadoBuscaAdjetivos");
+    const campoBusca = document.getElementById("buscaAdverbios");
+    const resultadoBusca = document.getElementById("resultadoBuscaAdverbios");
     const termo = campoBusca.value.trim();
     const termoNormalizado = normalizar(termo);
 
@@ -38,27 +38,22 @@ function atualizarFiltro(reiniciarPagina = false) {
         registrosFiltrados = [...registros];
         resultadoBusca.textContent = "";
     } else {
-        registrosFiltrados = registros.filter(([adjetivo, item]) => {
-            const adjetivoOk =
-                normalizar(adjetivo).includes(termoNormalizado);
-            const traducaoOk =
-                normalizar(item.traducao).includes(termoNormalizado);
-
-            return adjetivoOk || traducaoOk;
-        });
+        registrosFiltrados = registros.filter(([adverbio, item]) =>
+            normalizar(adverbio).includes(termoNormalizado) ||
+            normalizar(item.traducao).includes(termoNormalizado) ||
+            normalizar(item.tipo).includes(termoNormalizado)
+        );
 
         resultadoBusca.textContent =
             `${registrosFiltrados.length} resultado${registrosFiltrados.length === 1 ? "" : "s"}`;
     }
 
-    if (reiniciarPagina) {
-        paginaAtual = 1;
-    }
+    if (reiniciarPagina) paginaAtual = 1;
 }
 
-async function excluirAdjetivo(adjetivo, botao) {
+async function excluirAdverbio(adverbio, botao) {
     const confirmado = window.confirm(
-        `Excluir "${adjetivo}"? Esta ação não pode ser desfeita.`
+        `Excluir "${adverbio}"? Esta ação não pode ser desfeita.`
     );
 
     if (!confirmado) return;
@@ -67,33 +62,30 @@ async function excluirAdjetivo(adjetivo, botao) {
     botao.textContent = "Excluindo...";
 
     try {
-        await remove(ref(database, `adjetivos/${adjetivo}`));
+        await remove(ref(database, `adverbios/${adverbio}`));
 
-        if (modoFormulario === "editar" && adjetivoOriginal === adjetivo) {
+        if (modoFormulario === "editar" && adverbioOriginal === adverbio) {
             cancelarFormulario();
         }
     } catch (error) {
-        console.error("Erro ao excluir adjetivo:", error);
-        window.alert("Não foi possível excluir o adjetivo.");
+        console.error("Erro ao excluir advérbio:", error);
+        window.alert("Não foi possível excluir o advérbio.");
         botao.disabled = false;
         botao.textContent = "Excluir";
     }
 }
 
-function criarLinha(adjetivo, item) {
+function criarLinha(adverbio, item) {
     const linha = document.createElement("tr");
 
     const nome = document.createElement("td");
-    nome.textContent = adjetivo;
+    nome.textContent = adverbio;
 
     const traducao = document.createElement("td");
     traducao.textContent = item.traducao || "";
 
-    const comparativo = document.createElement("td");
-    comparativo.textContent = item.comparativo || "";
-
-    const superlativo = document.createElement("td");
-    superlativo.textContent = item.superlativo || "";
+    const tipo = document.createElement("td");
+    tipo.textContent = item.tipo || "";
 
     const acoes = document.createElement("td");
     acoes.className = "celula-acoes";
@@ -105,29 +97,29 @@ function criarLinha(adjetivo, item) {
     editar.type = "button";
     editar.className = "botao-editar";
     editar.textContent = "Editar";
-    editar.addEventListener("click", () => abrirEdicao(adjetivo, item));
+    editar.addEventListener("click", () => abrirEdicao(adverbio, item));
 
     const excluir = document.createElement("button");
     excluir.type = "button";
     excluir.className = "botao-excluir";
     excluir.textContent = "Excluir";
-    excluir.addEventListener("click", () => excluirAdjetivo(adjetivo, excluir));
+    excluir.addEventListener("click", () => excluirAdverbio(adverbio, excluir));
 
     grupoAcoes.append(editar, excluir);
     acoes.appendChild(grupoAcoes);
-    linha.append(nome, traducao, comparativo, superlativo, acoes);
+    linha.append(nome, traducao, tipo, acoes);
 
     return linha;
 }
 
 function renderizarPagina() {
-    const corpo = document.getElementById("listaAdjetivos");
-    const paginacao = document.getElementById("paginacaoAdjetivos");
-    const anterior = document.getElementById("paginaAnteriorAdjetivos");
-    const proxima = document.getElementById("proximaPaginaAdjetivos");
-    const indicador = document.getElementById("indicadorPaginaAdjetivos");
-    const vazio = document.getElementById("listaAdjetivosVazia");
-    const campoBusca = document.getElementById("buscaAdjetivos");
+    const corpo = document.getElementById("listaAdverbios");
+    const paginacao = document.getElementById("paginacaoAdverbios");
+    const anterior = document.getElementById("paginaAnteriorAdverbios");
+    const proxima = document.getElementById("proximaPaginaAdverbios");
+    const indicador = document.getElementById("indicadorPaginaAdverbios");
+    const vazio = document.getElementById("listaAdverbiosVazia");
+    const campoBusca = document.getElementById("buscaAdverbios");
 
     const totalPaginas = Math.ceil(
         registrosFiltrados.length / REGISTROS_POR_PAGINA
@@ -137,11 +129,12 @@ function renderizarPagina() {
         corpo.innerHTML = "";
         paginacao.hidden = true;
 
-        if (registros.length === 0) {
-            vazio.textContent = "Nenhum adjetivo cadastrado.";
-        } else if (campoBusca.value.trim() !== "") {
-            vazio.textContent = "Nenhum adjetivo encontrado.";
-        }
+        vazio.textContent =
+            registros.length === 0
+                ? "Nenhum advérbio cadastrado."
+                : campoBusca.value.trim() !== ""
+                    ? "Nenhum advérbio encontrado."
+                    : "Nenhum advérbio cadastrado.";
 
         vazio.hidden = false;
         return;
@@ -155,8 +148,8 @@ function renderizarPagina() {
 
     corpo.innerHTML = "";
 
-    registrosFiltrados.slice(inicio, fim).forEach(([adjetivo, item]) => {
-        corpo.appendChild(criarLinha(adjetivo, item));
+    registrosFiltrados.slice(inicio, fim).forEach(([adverbio, item]) => {
+        corpo.appendChild(criarLinha(adverbio, item));
     });
 
     indicador.textContent = `Página ${paginaAtual} de ${totalPaginas}`;
@@ -169,7 +162,7 @@ function configurarControlesPaginacao() {
     if (controlesConfigurados) return;
 
     document
-        .getElementById("paginaAnteriorAdjetivos")
+        .getElementById("paginaAnteriorAdverbios")
         .addEventListener("click", () => {
             if (paginaAtual > 1) {
                 paginaAtual--;
@@ -178,7 +171,7 @@ function configurarControlesPaginacao() {
         });
 
     document
-        .getElementById("proximaPaginaAdjetivos")
+        .getElementById("proximaPaginaAdverbios")
         .addEventListener("click", () => {
             const totalPaginas = Math.ceil(
                 registrosFiltrados.length / REGISTROS_POR_PAGINA
@@ -197,7 +190,7 @@ function configurarBusca() {
     if (buscaConfigurada) return;
 
     document
-        .getElementById("buscaAdjetivos")
+        .getElementById("buscaAdverbios")
         .addEventListener("input", () => {
             atualizarFiltro(true);
             renderizarPagina();
@@ -207,43 +200,41 @@ function configurarBusca() {
 }
 
 function definirMensagemCadastro(texto, sucesso = false) {
-    const mensagem = document.getElementById("mensagemAdjetivo");
+    const mensagem = document.getElementById("mensagemAdverbio");
     mensagem.textContent = texto;
     mensagem.classList.toggle("sucesso", sucesso);
 }
 
-function prepararNovoAdjetivo() {
-    const form = document.getElementById("formAdjetivo");
+function prepararNovoAdverbio() {
+    const form = document.getElementById("formAdverbio");
 
     form.reset();
     modoFormulario = "novo";
-    adjetivoOriginal = null;
+    adverbioOriginal = null;
 
-    document.getElementById("tituloFormAdjetivo").textContent =
-        "Novo adjetivo";
-    document.getElementById("salvarAdjetivo").textContent = "Salvar";
+    document.getElementById("tituloFormAdverbio").textContent =
+        "Novo advérbio";
+    document.getElementById("salvarAdverbio").textContent = "Salvar";
 
     definirMensagemCadastro("");
     form.hidden = false;
-    document.getElementById("nomeAdjetivo").focus();
+    document.getElementById("nomeAdverbio").focus();
 }
 
-function abrirEdicao(adjetivo, item) {
-    const form = document.getElementById("formAdjetivo");
+function abrirEdicao(adverbio, item) {
+    const form = document.getElementById("formAdverbio");
 
     modoFormulario = "editar";
-    adjetivoOriginal = adjetivo;
+    adverbioOriginal = adverbio;
 
-    document.getElementById("tituloFormAdjetivo").textContent =
-        `Editar: ${adjetivo}`;
-    document.getElementById("nomeAdjetivo").value = adjetivo;
-    document.getElementById("traducaoAdjetivo").value =
+    document.getElementById("tituloFormAdverbio").textContent =
+        `Editar: ${adverbio}`;
+    document.getElementById("nomeAdverbio").value = adverbio;
+    document.getElementById("traducaoAdverbio").value =
         item.traducao || "";
-    document.getElementById("comparativoAdjetivo").value =
-        item.comparativo || "";
-    document.getElementById("superlativoAdjetivo").value =
-        item.superlativo || "";
-    document.getElementById("observacaoAdjetivo").value =
+    document.getElementById("tipoAdverbio").value =
+        item.tipo || "";
+    document.getElementById("observacaoAdverbio").value =
         item.observacao || "";
 
     definirMensagemCadastro("");
@@ -252,72 +243,70 @@ function abrirEdicao(adjetivo, item) {
 }
 
 function cancelarFormulario() {
-    const form = document.getElementById("formAdjetivo");
+    const form = document.getElementById("formAdverbio");
 
     form.reset();
     form.hidden = true;
     modoFormulario = "novo";
-    adjetivoOriginal = null;
+    adverbioOriginal = null;
 
-    document.getElementById("tituloFormAdjetivo").textContent =
-        "Novo adjetivo";
-    document.getElementById("salvarAdjetivo").textContent = "Salvar";
+    document.getElementById("tituloFormAdverbio").textContent =
+        "Novo advérbio";
+    document.getElementById("salvarAdverbio").textContent = "Salvar";
 
     definirMensagemCadastro("");
 }
 
 function montarDadosFormulario() {
-    const adjetivo = document
-        .getElementById("nomeAdjetivo")
+    const adverbio = document
+        .getElementById("nomeAdverbio")
         .value
         .trim()
         .toLocaleLowerCase("de-DE");
 
     const dados = {
         traducao:
-            document.getElementById("traducaoAdjetivo").value.trim(),
-        comparativo:
-            document.getElementById("comparativoAdjetivo").value.trim(),
-        superlativo:
-            document.getElementById("superlativoAdjetivo").value.trim(),
+            document.getElementById("traducaoAdverbio").value.trim(),
+        tipo:
+            document.getElementById("tipoAdverbio").value.trim().toLocaleLowerCase("pt-BR"),
         observacao:
-            document.getElementById("observacaoAdjetivo").value.trim()
+            document.getElementById("observacaoAdverbio").value.trim()
     };
 
-    return { adjetivo, dados };
+    return { adverbio, dados };
 }
 
-async function salvarNovo(adjetivo, dados) {
-    const caminho = ref(database, `adjetivos/${adjetivo}`);
+async function salvarNovo(adverbio, dados) {
+    const caminho = ref(database, `adverbios/${adverbio}`);
     const existente = await get(caminho);
 
     if (existente.exists()) {
-        throw new Error("ADJETIVO_EXISTENTE");
+        throw new Error("ADVERBIO_EXISTENTE");
     }
 
     await set(caminho, dados);
 }
 
-async function salvarEdicao(adjetivo, dados) {
-    if (!adjetivoOriginal) {
-        throw new Error("ADJETIVO_ORIGINAL_AUSENTE");
+async function salvarEdicao(adverbio, dados) {
+    if (!adverbioOriginal) {
+        throw new Error("ADVERBIO_ORIGINAL_AUSENTE");
     }
 
-    if (adjetivo === adjetivoOriginal) {
-        await set(ref(database, `adjetivos/${adjetivo}`), dados);
+    if (adverbio === adverbioOriginal) {
+        await set(ref(database, `adverbios/${adverbio}`), dados);
         return;
     }
 
-    const novoCaminho = ref(database, `adjetivos/${adjetivo}`);
+    const novoCaminho = ref(database, `adverbios/${adverbio}`);
     const existente = await get(novoCaminho);
 
     if (existente.exists()) {
-        throw new Error("ADJETIVO_EXISTENTE");
+        throw new Error("ADVERBIO_EXISTENTE");
     }
 
     const alteracoes = {};
-    alteracoes[`adjetivos/${adjetivo}`] = dados;
-    alteracoes[`adjetivos/${adjetivoOriginal}`] = null;
+    alteracoes[`adverbios/${adverbio}`] = dados;
+    alteracoes[`adverbios/${adverbioOriginal}`] = null;
 
     await update(ref(database), alteracoes);
 }
@@ -325,28 +314,28 @@ async function salvarEdicao(adjetivo, dados) {
 function configurarCadastro() {
     if (cadastroConfigurado) return;
 
-    const botaoNovo = document.getElementById("novoAdjetivo");
-    const botaoCancelar = document.getElementById("cancelarNovoAdjetivo");
-    const form = document.getElementById("formAdjetivo");
-    const botaoSalvar = document.getElementById("salvarAdjetivo");
+    const botaoNovo = document.getElementById("novoAdverbio");
+    const botaoCancelar = document.getElementById("cancelarNovoAdverbio");
+    const form = document.getElementById("formAdverbio");
+    const botaoSalvar = document.getElementById("salvarAdverbio");
 
-    botaoNovo.addEventListener("click", prepararNovoAdjetivo);
+    botaoNovo.addEventListener("click", prepararNovoAdverbio);
     botaoCancelar.addEventListener("click", cancelarFormulario);
 
     form.addEventListener("submit", async event => {
         event.preventDefault();
         definirMensagemCadastro("");
 
-        const { adjetivo, dados } = montarDadosFormulario();
+        const { adverbio, dados } = montarDadosFormulario();
 
-        if (!adjetivo) {
-            definirMensagemCadastro("Informe o adjetivo.");
+        if (!adverbio) {
+            definirMensagemCadastro("Informe o advérbio.");
             return;
         }
 
-        if (/[.#$\/\[\]]/.test(adjetivo)) {
+        if (/[.#$\/\[\]]/.test(adverbio)) {
             definirMensagemCadastro(
-                "O adjetivo contém um caractere que não pode ser usado no banco."
+                "O advérbio contém um caractere que não pode ser usado no banco."
             );
             return;
         }
@@ -358,38 +347,38 @@ function configurarCadastro() {
             const estavaEditando = modoFormulario === "editar";
 
             if (estavaEditando) {
-                await salvarEdicao(adjetivo, dados);
+                await salvarEdicao(adverbio, dados);
             } else {
-                await salvarNovo(adjetivo, dados);
+                await salvarNovo(adverbio, dados);
             }
 
-            adjetivoEmFoco = adjetivo;
+            adverbioEmFoco = adverbio;
             form.reset();
             modoFormulario = "novo";
-            adjetivoOriginal = null;
+            adverbioOriginal = null;
 
-            document.getElementById("tituloFormAdjetivo").textContent =
-                "Novo adjetivo";
+            document.getElementById("tituloFormAdverbio").textContent =
+                "Novo advérbio";
 
             definirMensagemCadastro(
                 estavaEditando
-                    ? `${adjetivo} atualizado com sucesso.`
-                    : `${adjetivo} cadastrado com sucesso.`,
+                    ? `${adverbio} atualizado com sucesso.`
+                    : `${adverbio} cadastrado com sucesso.`,
                 true
             );
         } catch (error) {
-            console.error("Erro ao salvar adjetivo:", error);
+            console.error("Erro ao salvar advérbio:", error);
 
-            if (error.message === "ADJETIVO_EXISTENTE") {
+            if (error.message === "ADVERBIO_EXISTENTE") {
                 definirMensagemCadastro(
-                    "Já existe um adjetivo com esse nome."
+                    "Já existe um advérbio com esse nome."
                 );
             } else {
-                adjetivoEmFoco = null;
+                adverbioEmFoco = null;
                 definirMensagemCadastro(
                     modoFormulario === "editar"
-                        ? "Não foi possível atualizar o adjetivo."
-                        : "Não foi possível cadastrar o adjetivo."
+                        ? "Não foi possível atualizar o advérbio."
+                        : "Não foi possível cadastrar o advérbio."
                 );
             }
         } finally {
@@ -401,13 +390,13 @@ function configurarCadastro() {
     cadastroConfigurado = true;
 }
 
-export function iniciarListaAdjetivos() {
-    const corpo = document.getElementById("listaAdjetivos");
-    const carregando = document.getElementById("carregandoAdjetivos");
-    const vazio = document.getElementById("listaAdjetivosVazia");
-    const erro = document.getElementById("erroAdjetivos");
-    const total = document.getElementById("totalAdjetivos");
-    const paginacao = document.getElementById("paginacaoAdjetivos");
+export function iniciarListaAdverbios() {
+    const corpo = document.getElementById("listaAdverbios");
+    const carregando = document.getElementById("carregandoAdverbios");
+    const vazio = document.getElementById("listaAdverbiosVazia");
+    const erro = document.getElementById("erroAdverbios");
+    const total = document.getElementById("totalAdverbios");
+    const paginacao = document.getElementById("paginacaoAdverbios");
 
     configurarControlesPaginacao();
     configurarCadastro();
@@ -429,7 +418,7 @@ export function iniciarListaAdjetivos() {
     total.textContent = "";
 
     cancelarEscuta = onValue(
-        ref(database, "adjetivos"),
+        ref(database, "adverbios"),
         snapshot => {
             carregando.hidden = true;
 
@@ -438,7 +427,7 @@ export function iniciarListaAdjetivos() {
                 registrosFiltrados = [];
                 atualizarFiltro(false);
                 renderizarPagina();
-                total.textContent = "0 adjetivos";
+                total.textContent = "0 advérbios";
                 return;
             }
 
@@ -449,9 +438,9 @@ export function iniciarListaAdjetivos() {
 
             atualizarFiltro(false);
 
-            if (adjetivoEmFoco) {
+            if (adverbioEmFoco) {
                 const indice = registrosFiltrados.findIndex(
-                    ([adjetivo]) => adjetivo === adjetivoEmFoco
+                    ([adverbio]) => adverbio === adverbioEmFoco
                 );
 
                 if (indice >= 0) {
@@ -459,18 +448,18 @@ export function iniciarListaAdjetivos() {
                         Math.floor(indice / REGISTROS_POR_PAGINA) + 1;
                 }
 
-                adjetivoEmFoco = null;
+                adverbioEmFoco = null;
             }
 
             total.textContent =
-                `${registros.length} adjetivo${registros.length === 1 ? "" : "s"}`;
+                `${registros.length} advérbio${registros.length === 1 ? "" : "s"}`;
 
             vazio.hidden = true;
             erro.hidden = true;
             renderizarPagina();
         },
         error => {
-            console.error("Erro ao carregar adjetivos:", error);
+            console.error("Erro ao carregar advérbios:", error);
 
             registros = [];
             registrosFiltrados = [];
@@ -484,7 +473,7 @@ export function iniciarListaAdjetivos() {
     );
 }
 
-export function pararListaAdjetivos() {
+export function pararListaAdverbios() {
     if (cancelarEscuta) {
         cancelarEscuta();
         cancelarEscuta = null;
@@ -493,23 +482,23 @@ export function pararListaAdjetivos() {
     registros = [];
     registrosFiltrados = [];
     paginaAtual = 1;
-    adjetivoEmFoco = null;
+    adverbioEmFoco = null;
     modoFormulario = "novo";
-    adjetivoOriginal = null;
+    adverbioOriginal = null;
 
-    const campoBusca = document.getElementById("buscaAdjetivos");
-    const resultadoBusca = document.getElementById("resultadoBuscaAdjetivos");
+    const campoBusca = document.getElementById("buscaAdverbios");
+    const resultadoBusca = document.getElementById("resultadoBuscaAdverbios");
 
     if (campoBusca) campoBusca.value = "";
     if (resultadoBusca) resultadoBusca.textContent = "";
 
-    const form = document.getElementById("formAdjetivo");
+    const form = document.getElementById("formAdverbio");
 
     if (form) {
         form.reset();
         form.hidden = true;
-        document.getElementById("tituloFormAdjetivo").textContent =
-            "Novo adjetivo";
+        document.getElementById("tituloFormAdverbio").textContent =
+            "Novo advérbio";
         definirMensagemCadastro("");
     }
 }

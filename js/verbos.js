@@ -295,6 +295,9 @@ function abrirEdicao(verbo, item) {
     document.getElementById("regenciasVerbo").value =
         formatarRegencias(item.regencias);
 
+    document.getElementById("observacaoVerbo").value =
+        item.observacao || "";
+
     document.getElementById("presenteVerbo").value =
         item.regularidade === "irregular" ? formatarConjugacao(item.presente) : "";
 
@@ -413,7 +416,9 @@ function montarDadosFormulario() {
         traducao,
         partizip,
         auxiliar,
-        regularidade
+        regularidade,
+        observacao:
+            document.getElementById("observacaoVerbo").value.trim()
     };
 
     const camposBooleanos = {

@@ -11,11 +11,15 @@ import {
 import {
     iniciarListaVerbos,
     pararListaVerbos
-} from "./verbos.js?v=20260920-1";
+} from "./verbos.js?v=20260921-2";
 import {
     iniciarListaAdjetivos,
     pararListaAdjetivos
-} from "./adjetivos.js?v=20260919-10";
+} from "./adjetivos.js?v=20260921-2";
+import {
+    iniciarListaAdverbios,
+    pararListaAdverbios
+} from "./adverbios.js?v=20260921-1";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 
@@ -85,6 +89,7 @@ sair.addEventListener("click", async () => {
     pararListaSubstantivos();
     pararListaVerbos();
     pararListaAdjetivos();
+    pararListaAdverbios();
     definirMensagem("");
     await signOut(auth);
 });
@@ -94,6 +99,7 @@ onAuthStateChanged(auth, async user => {
         pararListaSubstantivos();
         pararListaVerbos();
         pararListaAdjetivos();
+        pararListaAdverbios();
         await signOut(auth);
         mostrarSessaoAutenticada(false);
         definirMensagem("Esta conta não tem acesso ao painel.");
@@ -108,9 +114,11 @@ onAuthStateChanged(auth, async user => {
         iniciarListaSubstantivos();
         iniciarListaVerbos();
         iniciarListaAdjetivos();
+        iniciarListaAdverbios();
     } else {
         pararListaSubstantivos();
         pararListaVerbos();
         pararListaAdjetivos();
+        pararListaAdverbios();
     }
 });
