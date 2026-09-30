@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <link rel="stylesheet" href="css/style.css?v=20260921-3">
+    <link rel="stylesheet" href="css/style.css?v=20260929-1">
 </head>
 <body>
     <main class="app-shell">
@@ -105,6 +105,22 @@
                 </span>
                 <span class="painel-acesso-meta">
                     <span id="totalAdverbios" class="contador"></span>
+                    <span class="painel-acesso-seta" aria-hidden="true">→</span>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="painel-acesso-card"
+                data-modal="modalExpressoes"
+                aria-haspopup="dialog"
+            >
+                <span class="painel-acesso-texto">
+                    <strong>Expressões</strong>
+                    <span>Gerenciar registros do Realtime Database.</span>
+                </span>
+                <span class="painel-acesso-meta">
+                    <span id="totalExpressoes" class="contador"></span>
                     <span class="painel-acesso-seta" aria-hidden="true">→</span>
                 </span>
             </button>
@@ -600,10 +616,121 @@
                 </div>
             </dialog>
 
+            <dialog id="modalExpressoes" class="modal-admin" aria-labelledby="tituloModalExpressoes">
+                <div class="modal-admin-conteudo">
+                    <header class="modal-admin-header">
+                        <div>
+                            <div class="eyebrow">Gerenciamento</div>
+                            <h2 id="tituloModalExpressoes">Expressões</h2>
+                        </div>
+                        <button
+                            type="button"
+                            class="modal-admin-fechar"
+                            data-fechar-modal
+                            aria-label="Fechar"
+                        >×</button>
+                    </header>
+
+                    <div class="modal-admin-body">
+                        <div class="acoes-secao">
+                            <button type="button" id="novaExpressao">+ Nova expressão</button>
+                        </div>
+
+                        <form id="formExpressao" class="form-expressao" hidden>
+                            <div class="form-expressao-topo">
+                                <h3 id="tituloFormExpressao">Nova expressão</h3>
+                                <button type="button" id="cancelarNovaExpressao" class="secundario">Cancelar</button>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="campo">
+                                    <label for="textoExpressao">Expressão</label>
+                                    <input type="text" id="textoExpressao" autocomplete="off" required>
+                                </div>
+
+                                <div class="campo">
+                                    <label for="traducaoExpressao">Tradução</label>
+                                    <input type="text" id="traducaoExpressao" autocomplete="off" required>
+                                </div>
+
+                                <div class="campo campo-largo">
+                                    <label for="tipoExpressao">Tipo</label>
+                                    <input type="text" id="tipoExpressao" autocomplete="off" placeholder="Ex.: conversa, estrutura, imperativo, cortesia" required>
+                                </div>
+
+                                <div class="campo campo-largo">
+                                    <label for="explicacaoExpressao">Explicação</label>
+                                    <textarea id="explicacaoExpressao" rows="5" placeholder="Explique quando e como a expressão é usada." required></textarea>
+                                </div>
+
+                                <div class="campo campo-largo">
+                                    <label for="exemploExpressao">Exemplo</label>
+                                    <textarea id="exemploExpressao" rows="3" placeholder="Ex.: Ich gehe jeden Tag zu Fuß zur Arbeit."></textarea>
+                                </div>
+
+                                <div class="campo campo-largo">
+                                    <label for="traducaoExemploExpressao">Tradução do exemplo</label>
+                                    <textarea id="traducaoExemploExpressao" rows="3" placeholder="Ex.: Eu vou todos os dias a pé para o trabalho."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-acoes">
+                                <button type="submit" id="salvarExpressao">Salvar</button>
+                                <span id="mensagemExpressao" class="mensagem-form" role="status" aria-live="polite"></span>
+                            </div>
+                        </form>
+
+                        <div class="busca-expressoes">
+                            <input
+                                type="search"
+                                id="buscaExpressoes"
+                                placeholder="Buscar por expressão, tradução, tipo, explicação ou exemplo..."
+                                autocomplete="off"
+                                aria-label="Buscar expressões"
+                            >
+                            <span id="resultadoBuscaExpressoes" class="resultado-busca"></span>
+                        </div>
+
+                        <div id="carregandoExpressoes" class="estado-lista" role="status">
+                            Carregando expressões...
+                        </div>
+
+                        <div id="erroExpressoes" class="estado-lista erro" hidden>
+                            Não foi possível carregar as expressões.
+                        </div>
+
+                        <div id="listaExpressoesVazia" class="estado-lista" hidden>
+                            Nenhuma expressão cadastrada.
+                        </div>
+
+                        <div class="tabela-wrapper">
+                            <table class="tabela-expressoes">
+                                <thead>
+                                    <tr>
+                                        <th>Expressão</th>
+                                        <th>Tradução</th>
+                                        <th>Tipo</th>
+                                        <th class="coluna-detalhes">Detalhes</th>
+                                        <th class="coluna-acoes">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaExpressoes"></tbody>
+                            </table>
+                        </div>
+
+                        <div id="paginacaoExpressoes" class="paginacao" hidden>
+                            <button type="button" id="paginaAnteriorExpressoes" class="secundario">← Anterior</button>
+                            <span id="indicadorPaginaExpressoes"></span>
+                            <button type="button" id="proximaPaginaExpressoes" class="secundario">Próxima →</button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+
         </section>
     </main>
 
     <script type="module" src="js/painel.js?v=20260920-1"></script>
-    <script type="module" src="js/auth.js?v=20260921-3"></script>
+    <script type="module" src="js/auth.js?v=20260929-1"></script>
 </body>
 </html>

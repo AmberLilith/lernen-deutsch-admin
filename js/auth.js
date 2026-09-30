@@ -20,6 +20,10 @@ import {
     iniciarListaAdverbios,
     pararListaAdverbios
 } from "./adverbios.js?v=20260921-2";
+import {
+    iniciarListaExpressoes,
+    pararListaExpressoes
+} from "./expressoes.js?v=20260929-1";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 
@@ -90,6 +94,7 @@ sair.addEventListener("click", async () => {
     pararListaVerbos();
     pararListaAdjetivos();
     pararListaAdverbios();
+    pararListaExpressoes();
     definirMensagem("");
     await signOut(auth);
 });
@@ -100,6 +105,7 @@ onAuthStateChanged(auth, async user => {
         pararListaVerbos();
         pararListaAdjetivos();
         pararListaAdverbios();
+        pararListaExpressoes();
         await signOut(auth);
         mostrarSessaoAutenticada(false);
         definirMensagem("Esta conta não tem acesso ao painel.");
@@ -115,10 +121,12 @@ onAuthStateChanged(auth, async user => {
         iniciarListaVerbos();
         iniciarListaAdjetivos();
         iniciarListaAdverbios();
+        iniciarListaExpressoes();
     } else {
         pararListaSubstantivos();
         pararListaVerbos();
         pararListaAdjetivos();
         pararListaAdverbios();
+        pararListaExpressoes();
     }
 });
