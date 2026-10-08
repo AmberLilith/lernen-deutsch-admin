@@ -632,6 +632,14 @@ function configurarCadastro() {
             return;
         }
 
+        if (dados.prefixo && !dados.separavel) {
+            definirMensagemCadastro(
+                "Se o prefixo estiver preenchido, marque o verbo como Separável."
+            );
+            document.getElementById("separavelVerbo").focus();
+            return;
+        }
+
         botaoSalvar.disabled = true;
         botaoSalvar.textContent = "Salvando...";
 
