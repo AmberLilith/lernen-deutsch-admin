@@ -350,6 +350,12 @@ function abrirEdicao(verbo, item) {
     document.getElementById("verboAuxiliarVerbo").checked = Boolean(item.verboAuxiliar);
     document.getElementById("impessoalVerbo").checked = Boolean(item.impessoal);
 
+    const casosRegidos = new Set(normalizarLista(item.casosRegidos));
+    document.getElementById("casoNominativVerbo").checked = casosRegidos.has("Nominativ");
+    document.getElementById("casoAkkusativVerbo").checked = casosRegidos.has("Akkusativ");
+    document.getElementById("casoDativVerbo").checked = casosRegidos.has("Dativ");
+    document.getElementById("casoGenitivVerbo").checked = casosRegidos.has("Genitiv");
+
     document.getElementById("regenciasVerbo").value =
         formatarRegencias(item.regencias);
 
@@ -440,7 +446,7 @@ function interpretarRegencias(texto) {
 
         if (!prep || !caso) {
             throw new Error(
-                'Regências: use o formato "preposição | caso", uma por linha.'
+                'Regências preposicionais: use o formato "preposição | caso", uma por linha.'
             );
         }
 
@@ -496,6 +502,19 @@ function montarDadosFormulario() {
     });
 
     if (prefixo) dados.prefixo = prefixo;
+
+    const casosRegidos = [
+        ["Nominativ", "casoNominativVerbo"],
+        ["Akkusativ", "casoAkkusativVerbo"],
+        ["Dativ", "casoDativVerbo"],
+        ["Genitiv", "casoGenitivVerbo"]
+    ]
+        .filter(([, id]) => document.getElementById(id).checked)
+        .map(([caso]) => caso);
+
+    if (casosRegidos.length) {
+        dados.casosRegidos = casosRegidos;
+    }
 
     const regencias = interpretarRegencias(
         document.getElementById("regenciasVerbo").value
