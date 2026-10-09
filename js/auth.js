@@ -23,7 +23,7 @@ import {
 import {
     iniciarListaExpressoes,
     pararListaExpressoes
-} from "./expressoes.js?v=20260929-1";
+} from "./expressoes.js?v=20261009-1";
 
 const ADMIN_UID = "IBFeuoYBZlUTGYc3BLW7Dz7lxzx2";
 

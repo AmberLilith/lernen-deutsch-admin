@@ -82,8 +82,7 @@ function atualizarFiltro(reiniciarPagina = false) {
                 item.traducao,
                 item.tipo,
                 item.explicacao,
-                item.exemplo,
-                item.traducaoExemplo
+                item.exemplo
             ].join(" ");
 
             return normalizar(texto).includes(termoNormalizado);
@@ -139,8 +138,7 @@ function criarLinha(id, item) {
 
     const temDetalhes = [
         item.explicacao,
-        item.exemplo,
-        item.traducaoExemplo
+        item.exemplo
     ].some(valor => String(valor || "").trim());
 
     let linhaDetalhes = null;
@@ -175,21 +173,10 @@ function criarLinha(id, item) {
         if (item.exemplo) {
             const rotulo = document.createElement("strong");
             rotulo.className = "detalhe-secundario";
-            rotulo.textContent = "Exemplo:";
+            rotulo.textContent = "Exemplo(s):";
 
             const texto = document.createElement("p");
             texto.textContent = item.exemplo;
-
-            conteudo.append(rotulo, texto);
-        }
-
-        if (item.traducaoExemplo) {
-            const rotulo = document.createElement("strong");
-            rotulo.className = "detalhe-secundario";
-            rotulo.textContent = "Tradução do exemplo:";
-
-            const texto = document.createElement("p");
-            texto.textContent = item.traducaoExemplo;
 
             conteudo.append(rotulo, texto);
         }
@@ -368,9 +355,6 @@ function abrirEdicao(id, item) {
         item.explicacao || "";
     document.getElementById("exemploExpressao").value =
         item.exemplo || "";
-    document.getElementById("traducaoExemploExpressao").value =
-        item.traducaoExemplo || "";
-
     definirMensagemCadastro("");
     form.hidden = false;
     form.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -405,9 +389,7 @@ function montarDadosFormulario() {
         explicacao:
             document.getElementById("explicacaoExpressao").value.trim(),
         exemplo:
-            document.getElementById("exemploExpressao").value.trim(),
-        traducaoExemplo:
-            document.getElementById("traducaoExemploExpressao").value.trim()
+            document.getElementById("exemploExpressao").value.trim()
     };
 }
 
