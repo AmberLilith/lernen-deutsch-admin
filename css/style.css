@@ -1371,3 +1371,19 @@ button.secundario {
         width: 100%;
     }
 }
+
+
+/* Validação contextual dos checkboxes do formulário de verbos */
+.campo-checkbox-validacao {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.erro-campo {
+    color: #b42318;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+}

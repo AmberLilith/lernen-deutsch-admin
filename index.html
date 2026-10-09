@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin · Lernen Deutsch</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <link rel="stylesheet" href="css/style.css?v=20260929-1">
+    <link rel="stylesheet" href="css/style.css?v=20261009-1">
 </head>
 <body>
     <main class="app-shell">
@@ -316,7 +316,10 @@
                         <fieldset class="campo campo-largo caracteristicas-verbo">
                             <legend>Características gramaticais</legend>
                             <div class="checkbox-grid">
-                                <label><input type="checkbox" id="separavelVerbo"> Separável</label>
+                                <div class="campo-checkbox-validacao">
+                                    <label><input type="checkbox" id="separavelVerbo" aria-describedby="erroSeparavelVerbo"> Separável</label>
+                                    <small id="erroSeparavelVerbo" class="erro-campo" role="alert" hidden></small>
+                                </div>
                                 <label><input type="checkbox" id="inseparavelVerbo"> Inseparável</label>
                                 <label><input type="checkbox" id="reflexivoVerbo"> Reflexivo</label>
                                 <label><input type="checkbox" id="preposicionalVerbo"> Preposicional</label>
@@ -747,6 +750,6 @@
     </main>
 
     <script type="module" src="js/painel.js?v=20260920-1"></script>
-    <script type="module" src="js/auth.js?v=20261008-2"></script>
+    <script type="module" src="js/auth.js?v=20261009-1"></script>
 </body>
 </html>

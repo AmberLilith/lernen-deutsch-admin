@@ -292,9 +292,21 @@ function atualizarCamposIrregulares() {
     document.getElementById("preteritoVerbo").required = irregular;
 }
 
+function definirErroSeparavel(texto = "") {
+    const erro = document.getElementById("erroSeparavelVerbo");
+    erro.textContent = texto;
+    erro.hidden = !texto;
+}
+
 function atualizarObrigatoriedadePrefixo() {
     const separavel = document.getElementById("separavelVerbo").checked;
+    const prefixo = document.getElementById("prefixoVerbo").value.trim();
+
     document.getElementById("prefixoVerbo").required = separavel;
+
+    if (separavel || !prefixo) {
+        definirErroSeparavel();
+    }
 }
 
 
@@ -308,6 +320,7 @@ function prepararNovoVerbo() {
     document.getElementById("tituloFormVerbo").textContent = "Novo verbo";
     document.getElementById("salvarVerbo").textContent = "Salvar";
     definirMensagemCadastro("");
+    definirErroSeparavel();
     atualizarCamposIrregulares();
     atualizarObrigatoriedadePrefixo();
     form.hidden = false;
@@ -371,6 +384,7 @@ function abrirEdicao(verbo, item) {
     atualizarCamposIrregulares();
     atualizarObrigatoriedadePrefixo();
     definirMensagemCadastro("");
+    definirErroSeparavel();
     form.hidden = false;
     form.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -386,6 +400,7 @@ function cancelarFormulario() {
     document.getElementById("tituloFormVerbo").textContent = "Novo verbo";
     document.getElementById("salvarVerbo").textContent = "Salvar";
     definirMensagemCadastro("");
+    definirErroSeparavel();
     atualizarCamposIrregulares();
     atualizarObrigatoriedadePrefixo();
 }
@@ -584,11 +599,13 @@ function configurarCadastro() {
     const botaoSalvar = document.getElementById("salvarVerbo");
     const regularidade = document.getElementById("regularidadeVerbo");
     const separavel = document.getElementById("separavelVerbo");
+    const prefixo = document.getElementById("prefixoVerbo");
 
     botaoNovo.addEventListener("click", prepararNovoVerbo);
     botaoCancelar.addEventListener("click", cancelarFormulario);
     regularidade.addEventListener("change", atualizarCamposIrregulares);
     separavel.addEventListener("change", atualizarObrigatoriedadePrefixo);
+    prefixo.addEventListener("input", atualizarObrigatoriedadePrefixo);
 
     form.addEventListener("submit", async event => {
         event.preventDefault();
@@ -633,12 +650,16 @@ function configurarCadastro() {
         }
 
         if (dados.prefixo && !dados.separavel) {
-            definirMensagemCadastro(
-                "Se o prefixo estiver preenchido, marque o verbo como Separável."
-            );
+            const mensagem =
+                "Se o prefixo estiver preenchido, marque o verbo como Separável.";
+
+            definirMensagemCadastro(mensagem);
+            definirErroSeparavel(mensagem);
             document.getElementById("separavelVerbo").focus();
             return;
         }
+
+        definirErroSeparavel();
 
         botaoSalvar.disabled = true;
         botaoSalvar.textContent = "Salvando...";
